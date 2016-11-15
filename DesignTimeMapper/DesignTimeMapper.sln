@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DesignTimeMapper.Engine", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DesignTimeMapper.Engine.Tests", "DesignTimeMapper.Engine.Tests\DesignTimeMapper.Engine.Tests.csproj", "{DAF50090-691E-4851-9116-EE770D822556}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DesignTimeMapper.ExamplePocos", "DesignTimeMapper.ExamplePocos\DesignTimeMapper.ExamplePocos.csproj", "{1A3A0380-42B8-4315-8703-92CD5E3BED08}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{DAF50090-691E-4851-9116-EE770D822556}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DAF50090-691E-4851-9116-EE770D822556}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DAF50090-691E-4851-9116-EE770D822556}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1A3A0380-42B8-4315-8703-92CD5E3BED08}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1A3A0380-42B8-4315-8703-92CD5E3BED08}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1A3A0380-42B8-4315-8703-92CD5E3BED08}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1A3A0380-42B8-4315-8703-92CD5E3BED08}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
