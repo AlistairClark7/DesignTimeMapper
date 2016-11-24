@@ -1,4 +1,5 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.Diagnostics;
+using System.Text.RegularExpressions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace DesignTimeMapper.Engine.Tests.Unit
@@ -30,10 +31,25 @@ namespace DesignTimeMapper.Engine.Tests.Unit
                     {{
                         public int Property1 {{ get; set; }}
                         public string Property2 {{ get; set; }}
+                        public static SimpleClassDto Create(SimpleClass simpleclass)
+                        {{
+                            return new SimpleClassDto()
+                            {{
+                                Property1 = simpleclass.Property1, 
+                                Property2 = simpleclass.Property2
+                            }};
+                        }}
                     }}
                 }}";
+            
+            Debug.WriteLine(mappedClass);
 
             Assert.AreEqual(Regex.Replace(expected, @"\s+", ""), Regex.Replace(mappedClass, @"\s+", ""));
+        }
+
+        [TestMethod]
+        public void Notepad()
+        {
         }
     }
 }
