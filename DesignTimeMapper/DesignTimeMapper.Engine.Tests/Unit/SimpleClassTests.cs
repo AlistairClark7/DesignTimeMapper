@@ -22,8 +22,9 @@ namespace DesignTimeMapper.Engine.Tests.Unit
 
             var newNamespace = "Mapped";
             var newClassName = "SimpleClassDto";
+            var newClassSuffix = "Dto";
 
-            var mappedClass = new Mapper().CreateMapClass(template, newNamespace, newClassName);
+            var mappedClass = new ClassMapper().CreateMapClass(template, newNamespace, string.Empty, newClassSuffix);
 
             var expected = $@"namespace {newNamespace}
                 {{
