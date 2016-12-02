@@ -158,6 +158,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Attributes\MapFromAttribute.cs" />
     <Compile Include="Interface\IMapperMethodGenerator.cs" />
     <Compile Include="Mapper.cs" />
     <Compile Include="ClassMapper.cs" />
