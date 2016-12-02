@@ -173,6 +173,7 @@
   </Choose>
   <ItemGroup>
     <Compile Include="Integration\SimpleClassIntegrationTests.cs" />
+    <Compile Include="Unit\MapperMethodGeneratorTests.cs" />
     <Compile Include="Unit\SimpleClassTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
