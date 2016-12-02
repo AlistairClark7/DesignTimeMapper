@@ -172,6 +172,7 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="Integration\MapperMethodGeneratorIntegrationTests.cs" />
     <Compile Include="Integration\SimpleClassIntegrationTests.cs" />
     <Compile Include="Unit\MapperMethodGeneratorTests.cs" />
     <Compile Include="Unit\SimpleClassTests.cs" />

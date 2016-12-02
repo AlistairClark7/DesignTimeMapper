@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using DesignTimeMapper.Engine.Interface;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
@@ -9,6 +11,25 @@ namespace DesignTimeMapper.Engine
 {
     public class MapperMethodGenerator : IMapperMethodGenerator
     {
+        public IList<MethodDeclarationSyntax> CreateMapperMethods(Compilation compilation)
+        {
+            foreach (var ns in compilation.Assembly.GlobalNamespace.GetNamespaceMembers())
+            {
+                foreach (var namespaceMember in ns.GetNamespaceMembers())
+                {
+                    foreach (var typeMember in namespaceMember.GetTypeMembers().Where(tm => tm.GetAttributes().Any(a => a.AttributeClass.Name == "MapFromAttribute")))
+                    {
+                        foreach (var member in typeMember.GetMembers())
+                        {
+
+                        }
+                    }
+                }
+            }
+
+            return new List<MethodDeclarationSyntax>();
+        }
+
         public MethodDeclarationSyntax CreateMapperMethod(MemberDeclarationSyntax originalClass, List<MemberDeclarationSyntax> properties, string newClassName)
         {
             var c = originalClass as ClassDeclarationSyntax;
