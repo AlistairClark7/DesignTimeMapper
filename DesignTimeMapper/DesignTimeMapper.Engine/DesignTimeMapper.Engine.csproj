@@ -164,6 +164,7 @@
     <Compile Include="ClassMapper.cs" />
     <Compile Include="MapperMethodGenerator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RoslynExtensions.cs" />
     <Compile Include="Settings\DtmSettings.cs" />
     <Compile Include="StringExtensions.cs" />
   </ItemGroup>
