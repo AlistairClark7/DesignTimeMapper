@@ -1,12 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using DesignTimeMapper.Engine;
-using DesignTimeMapper.Engine.Settings;
-using Newtonsoft.Json;
 
 namespace DesignTimeMapper
 {
@@ -20,9 +14,9 @@ namespace DesignTimeMapper
 
         static int Main(string[] args)
         {
-            if (args == null || args.Length != 1)
+            if (args == null || args.Length != 2)
             {
-                Console.Error.WriteLine("Please provide a path to the Design Time Mapper settings file");
+                Console.Error.WriteLine("Error: DesignTimeMapper - Please provide a path to solution and a project name");
                 return ErrorInvalidCommandLine;
             }
             
@@ -32,25 +26,28 @@ namespace DesignTimeMapper
 
                 if (!File.Exists(path))
                 {
-                    Console.Error.WriteLine($"Could not find Design Time Mapper settings at path '{path}'");
+                    Console.Error.WriteLine($"Error: Could not find .sln file at path '{path}'");
                     return ErrorFileNotFound;
                 }
-                    
-                var settingsText = File.ReadAllText(path);
-                var settings = JsonConvert.DeserializeObject<DtmSettings>(settingsText);
 
-                if (settings == null)
+                var projectName = args[1];
+                if (string.IsNullOrWhiteSpace(projectName))
                 {
-                    Console.Error.WriteLine($"Could not parse contents of settings at path '{path}'");   
+                    Console.Error.WriteLine("Error: DesignTimeMapper - Project name cannot be empty");
+                    return ErrorInvalidCommandLine;
                 }
+
+                var mapper = new Mapper();
+                mapper.Map(path, projectName).Wait();
             }
             catch (Exception e)
             {
-                Console.Error.WriteLine($"Unexpected exception: {e}");
+                Console.Error.WriteLine($"Error: Unexpected exception: {e}");
 
                 return ErrorInvalidFunction;
             }
 
+            Console.WriteLine("Design Time Mapper - mapping completed successfully");
             return ErrorSuccess;
         }
     }

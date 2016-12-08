@@ -6,6 +6,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Editing;
+using Microsoft.CodeAnalysis.Text;
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
 namespace DesignTimeMapper.Engine
@@ -14,6 +15,35 @@ namespace DesignTimeMapper.Engine
     {
         private IMapperMethodGenerator _mapperMethodGenerator = new MapperMethodGenerator();
 
+        public SourceText CreateMapClass(Workspace workspace, IEnumerable<MemberDeclarationSyntax> methods)
+        {
+            var newNamespaceName = "TestNameSpace";
+            var newClassName = "DesignTimeMapper";
+
+            var newClass = CompilationUnit()
+                .WithMembers
+                (
+                    List
+                    (
+                        new MemberDeclarationSyntax[]
+                        {
+                            NamespaceDeclaration(IdentifierName(newNamespaceName)).WithMembers(
+                                SingletonList<MemberDeclarationSyntax>(
+                                    ClassDeclaration(newClassName)
+                                        .WithMembers
+                                        (
+                                            List
+                                            (
+                                                methods
+                                            )
+                                        ).WithModifiers(TokenList(Token(SyntaxKind.PublicKeyword)))
+                                ))
+                        }
+                    )
+                );
+            
+            return newClass.NormalizeWhitespace().GetText();
+        }
 
         public string CreateMapClass(string classText, string newNamespaceName, string newClassPrefix, string newClassSuffix)
         {
