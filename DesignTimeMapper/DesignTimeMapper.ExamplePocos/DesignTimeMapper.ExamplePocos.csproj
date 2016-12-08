@@ -53,6 +53,21 @@
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>
+    </PreBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup>
+    <BuildDependsOn>	
+	  DesignTimeMapperTarget;
+      $(BuildDependsOn)
+    </BuildDependsOn>
+  </PropertyGroup>
+  <Target Name="DesignTimeMapperTarget">
+    <PropertyGroup>
+      <PreBuildEvent>"C:\Development\DesignTimeMapper\DesignTimeMapper\DesignTimeMapper\bin\Debug\DesignTimeMapper.exe" $(SolutionPath) $(MSBuildProjectName)</PreBuildEvent>
+    </PropertyGroup>
+  </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
