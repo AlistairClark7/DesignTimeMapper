@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using DesignTimeMapper.Engine.Attributes;
 using DesignTimeMapper.Engine.Interface;
+using DesignTimeMapper.Engine.Model;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -12,9 +13,9 @@ namespace DesignTimeMapper.Engine
 {
     public class MapperMethodGenerator : IMapperMethodGenerator
     {
-        public IList<MethodDeclarationSyntax> CreateMapperMethods(Compilation compilation)
+        public IList<MethodWithUsings> CreateMapperMethods(Compilation compilation)
         {
-            var methodDeclarationSyntaxs = new List<MethodDeclarationSyntax>();
+            var methodDeclarationSyntaxs = new List<MethodWithUsings>();
             foreach (var ns in compilation.Assembly.GlobalNamespace.GetNamespaceMembers())
             {
                 foreach (var namespaceMember in ns.GetNamespaceMembers())
@@ -28,18 +29,9 @@ namespace DesignTimeMapper.Engine
 
                             if (attributeTypeSymbol != null)
                             {
-                                methodDeclarationSyntaxs.Add(CreateMapperMethod(typeMember, attributeTypeSymbol));
-
-                                foreach (var typeSymbolMemberName in attributeTypeSymbol.MemberNames)
-                                {
-                                
-                                }
+                                var withUsings = CreateMapperMethod(typeMember, attributeTypeSymbol);
+                                methodDeclarationSyntaxs.Add(withUsings);
                             }
-                        }
-
-                        foreach (var member in typeMember.GetMembers())
-                        {
-
                         }
                     }
                 }
@@ -48,7 +40,7 @@ namespace DesignTimeMapper.Engine
             return methodDeclarationSyntaxs;
         }
 
-        private MethodDeclarationSyntax CreateMapperMethod(INamedTypeSymbol classToMapToTypeSymbol, INamedTypeSymbol attributeTypeSymbol)
+        private MethodWithUsings CreateMapperMethod(INamedTypeSymbol classToMapToTypeSymbol, INamedTypeSymbol attributeTypeSymbol)
         {
             var inputArgName = attributeTypeSymbol.Name.ToCamelCase();
             var classToMapFromName = attributeTypeSymbol.Name;
@@ -119,7 +111,17 @@ namespace DesignTimeMapper.Engine
                     )
                 );
             
-            return methodDeclaration;
+            var withUsings = new MethodWithUsings
+            {
+                Method = methodDeclaration,
+                Usings = new List<string>
+                {
+                    attributeTypeSymbol.ContainingNamespace.GetFullMetadataName(),
+                    classToMapToTypeSymbol.ContainingNamespace.GetFullMetadataName()
+                }
+            };
+
+            return withUsings;
         }
 
         public MethodDeclarationSyntax CreateMapperMethod(MemberDeclarationSyntax originalClass, List<MemberDeclarationSyntax> properties, string newClassName)

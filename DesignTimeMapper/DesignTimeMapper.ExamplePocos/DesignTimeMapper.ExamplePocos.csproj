@@ -43,6 +43,7 @@
   <ItemGroup>
     <Compile Include="AddressDto.cs" />
     <Compile Include="ClassWithExternalReference.cs" />
+    <Compile Include="DesignTimeMapper.cs" />
     <Compile Include="SimpleClass.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

@@ -167,10 +167,11 @@
     <Compile Include="Mapper.cs" />
     <Compile Include="ClassMapper.cs" />
     <Compile Include="MapperMethodGenerator.cs" />
+    <Compile Include="Model\MethodWithUsings.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RoslynExtensions.cs" />
+    <Compile Include="Extensions\RoslynExtensions.cs" />
     <Compile Include="Settings\DtmSettings.cs" />
-    <Compile Include="StringExtensions.cs" />
+    <Compile Include="Extensions\StringExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

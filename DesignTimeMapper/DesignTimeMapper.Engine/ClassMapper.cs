@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using DesignTimeMapper.Engine.Interface;
+using DesignTimeMapper.Engine.Model;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -15,10 +16,11 @@ namespace DesignTimeMapper.Engine
     {
         private IMapperMethodGenerator _mapperMethodGenerator = new MapperMethodGenerator();
 
-        public SourceText CreateMapClass(Workspace workspace, IEnumerable<MemberDeclarationSyntax> methods)
+        public SourceText CreateMapClass(Workspace workspace, IEnumerable<MethodWithUsings> methods)
         {
             var newNamespaceName = "TestNameSpace";
             var newClassName = "DesignTimeMapper";
+
 
             var newClass = CompilationUnit()
                 .WithMembers
@@ -27,14 +29,15 @@ namespace DesignTimeMapper.Engine
                     (
                         new MemberDeclarationSyntax[]
                         {
-                            NamespaceDeclaration(IdentifierName(newNamespaceName)).WithMembers(
+                            NamespaceDeclaration(IdentifierName(newNamespaceName))
+                            .WithMembers(
                                 SingletonList<MemberDeclarationSyntax>(
                                     ClassDeclaration(newClassName)
                                         .WithMembers
                                         (
                                             List
                                             (
-                                                methods
+                                                methods.Select(m => m.Method)
                                             )
                                         ).WithModifiers(TokenList(Token(SyntaxKind.PublicKeyword)))
                                 ))
@@ -42,6 +45,14 @@ namespace DesignTimeMapper.Engine
                     )
                 );
             
+            foreach (var methodWithUsingse in methods)
+            {
+                foreach (var u in methodWithUsingse.Usings)
+                {
+                    newClass = newClass.AddUsings(UsingDirective(ParseName(u)));
+                }
+            }
+
             return newClass.NormalizeWhitespace().GetText();
         }
 
