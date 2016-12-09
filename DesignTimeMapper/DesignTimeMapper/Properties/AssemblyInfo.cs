@@ -4,11 +4,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("DesignTimeMapper")]
+[assembly: AssemblyTitle("DesignTimeMapper.Engine")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("DesignTimeMapper")]
+[assembly: AssemblyProduct("DesignTimeMapper.Engine")]
 [assembly: AssemblyCopyright("Copyright ©  2016")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -19,7 +19,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("cba34162-9a6c-412b-a0f9-d439eb3a29f2")]
+[assembly: Guid("33e194b0-2638-4a3a-8701-379304ef0860")]
 
 // Version information for an assembly consists of the following four values:
 //

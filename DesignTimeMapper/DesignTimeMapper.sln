@@ -3,13 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DesignTimeMapper.Engine", "DesignTimeMapper.Engine\DesignTimeMapper.Engine.csproj", "{33E194B0-2638-4A3A-8701-379304EF0860}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DesignTimeMapper.Engine.Tests", "DesignTimeMapper.Engine.Tests\DesignTimeMapper.Engine.Tests.csproj", "{DAF50090-691E-4851-9116-EE770D822556}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DesignTimeMapper.ExamplePocos", "DesignTimeMapper.ExamplePocos\DesignTimeMapper.ExamplePocos.csproj", "{1A3A0380-42B8-4315-8703-92CD5E3BED08}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DesignTimeMapper", "DesignTimeMapper\DesignTimeMapper.csproj", "{CBA34162-9A6C-412B-A0F9-D439EB3A29F2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DesignTimeMapper", "DesignTimeMapper\DesignTimeMapper.csproj", "{33E194B0-2638-4A3A-8701-379304EF0860}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DesignTimeMapper.CommandLine", "DesignTimeMapper.CommandLine\DesignTimeMapper.CommandLine.csproj", "{CBA34162-9A6C-412B-A0F9-D439EB3A29F2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DesignTimeMapper.Tests", "DesignTimeMapper.Tests\DesignTimeMapper.Tests.csproj", "{DAF50090-691E-4851-9116-EE770D822556}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,22 +17,22 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{33E194B0-2638-4A3A-8701-379304EF0860}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{33E194B0-2638-4A3A-8701-379304EF0860}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{33E194B0-2638-4A3A-8701-379304EF0860}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{33E194B0-2638-4A3A-8701-379304EF0860}.Release|Any CPU.Build.0 = Release|Any CPU
-		{DAF50090-691E-4851-9116-EE770D822556}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{DAF50090-691E-4851-9116-EE770D822556}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{DAF50090-691E-4851-9116-EE770D822556}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{DAF50090-691E-4851-9116-EE770D822556}.Release|Any CPU.Build.0 = Release|Any CPU
 		{1A3A0380-42B8-4315-8703-92CD5E3BED08}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{1A3A0380-42B8-4315-8703-92CD5E3BED08}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1A3A0380-42B8-4315-8703-92CD5E3BED08}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1A3A0380-42B8-4315-8703-92CD5E3BED08}.Release|Any CPU.Build.0 = Release|Any CPU
+		{33E194B0-2638-4A3A-8701-379304EF0860}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{33E194B0-2638-4A3A-8701-379304EF0860}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{33E194B0-2638-4A3A-8701-379304EF0860}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{33E194B0-2638-4A3A-8701-379304EF0860}.Release|Any CPU.Build.0 = Release|Any CPU
 		{CBA34162-9A6C-412B-A0F9-D439EB3A29F2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{CBA34162-9A6C-412B-A0F9-D439EB3A29F2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CBA34162-9A6C-412B-A0F9-D439EB3A29F2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CBA34162-9A6C-412B-A0F9-D439EB3A29F2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DAF50090-691E-4851-9116-EE770D822556}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DAF50090-691E-4851-9116-EE770D822556}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DAF50090-691E-4851-9116-EE770D822556}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DAF50090-691E-4851-9116-EE770D822556}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
