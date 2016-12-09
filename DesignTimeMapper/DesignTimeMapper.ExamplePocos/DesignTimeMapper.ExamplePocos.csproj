@@ -47,6 +47,12 @@
     <Compile Include="SimpleClass.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\DesignTimeMapper\DesignTimeMapper.csproj">
+      <Project>{33E194B0-2638-4A3A-8701-379304EF0860}</Project>
+      <Name>DesignTimeMapper</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>
@@ -60,7 +66,7 @@
   </PropertyGroup>
   <Target Name="DesignTimeMapperTarget">
     <PropertyGroup>
-      <PreBuildEvent>"C:\Development\DesignTimeMapper\DesignTimeMapper\DesignTimeMapper\bin\Debug\DesignTimeMapper.exe" $(SolutionPath) $(MSBuildProjectName)</PreBuildEvent>
+      <PreBuildEvent>"C:\Development\DesignTimeMapper\DesignTimeMapper\DesignTimeMapper.CommandLine\bin\Debug\DesignTimeMapper.CommandLine.exe" $(SolutionPath) $(MSBuildProjectName)</PreBuildEvent>
     </PropertyGroup>
   </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
