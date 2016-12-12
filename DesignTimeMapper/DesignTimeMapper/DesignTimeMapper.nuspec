@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>$id$</id>
+    <version>$version$</version>
+    <title>$title$</title>
+    <authors>Alistair Clark</authors>
+    <owners>Alistair Clark</owners>
+    <licenseUrl>https://opensource.org/licenses/MIT</licenseUrl>
+    <projectUrl>https://github.com/AlistairClark7/DesignTimeMapper</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Tool that uses Roslyn to automatically create object-object mapper methods</description>
+    <releaseNotes>SInitial release</releaseNotes>
+    <copyright>Copyright 2016</copyright>
+    <tags></tags>
+  </metadata>
+  <files>
+    <file src="build\**" target="build" />
+    <file src="tools\**" target="build" />
+  </files>
+</package>
