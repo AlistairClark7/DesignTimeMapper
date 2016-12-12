@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace DesignTimeMapper.Engine.Attributes
+namespace DesignTimeMapper.Attributes
 {
     [AttributeUsage(AttributeTargets.Class)]
     public class MapFromAttribute : Attribute

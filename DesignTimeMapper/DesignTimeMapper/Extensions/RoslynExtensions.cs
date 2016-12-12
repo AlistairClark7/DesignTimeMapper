@@ -1,7 +1,7 @@
 ﻿using System.Text;
 using Microsoft.CodeAnalysis;
 
-namespace DesignTimeMapper.Engine
+namespace DesignTimeMapper.Extensions
 {
     public static class RoslynExtensions
     {

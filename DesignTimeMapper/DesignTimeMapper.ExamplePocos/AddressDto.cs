@@ -1,5 +1,5 @@
 ﻿using System.Device.Location;
-using DesignTimeMapper.Engine.Attributes;
+using DesignTimeMapper.Attributes;
 
 namespace DesignTimeMapper.ExamplePocos
 {

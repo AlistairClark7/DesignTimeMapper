@@ -1,15 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using DesignTimeMapper.Engine.Attributes;
-using DesignTimeMapper.Engine.Interface;
-using DesignTimeMapper.Engine.Model;
+using DesignTimeMapper.Attributes;
+using DesignTimeMapper.Extensions;
+using DesignTimeMapper.Interface;
+using DesignTimeMapper.Model;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
-namespace DesignTimeMapper.Engine
+namespace DesignTimeMapper
 {
     public class MapperMethodGenerator : IMapperMethodGenerator
     {
@@ -51,56 +51,56 @@ namespace DesignTimeMapper.Engine
                 properties.AddRange(declaringSyntaxReference.GetSyntax().DescendantNodesAndSelf().OfType<PropertyDeclarationSyntax>());
             }
             var assignmentExpressionSyntaxs = GetAssignmentExpressionSyntaxs(properties, inputArgName);
-            var methodDeclaration = MethodDeclaration
+            var methodDeclaration = SyntaxFactory.MethodDeclaration
                 (
-                    IdentifierName(classToMapToTypeSymbol.Name),
-                    Identifier("MapFrom")
+                    SyntaxFactory.IdentifierName(classToMapToTypeSymbol.Name),
+                    SyntaxFactory.Identifier("MapFrom")
                 )
                 .WithModifiers
                 (
-                    TokenList
-                    (Token(SyntaxKind.PublicKeyword),
-                        Token(SyntaxKind.StaticKeyword))
+                    SyntaxFactory.TokenList
+                    (SyntaxFactory.Token(SyntaxKind.PublicKeyword),
+                        SyntaxFactory.Token(SyntaxKind.StaticKeyword))
                 )
                 .WithParameterList
                 (
-                    ParameterList
+                    SyntaxFactory.ParameterList
                     (
-                        SingletonSeparatedList
+                        SyntaxFactory.SingletonSeparatedList
                         (
-                            Parameter
+                            SyntaxFactory.Parameter
                                 (
-                                    Identifier(inputArgName)
+                                    SyntaxFactory.Identifier(inputArgName)
                                 )
                                 .WithType
                                 (
-                                    IdentifierName(classToMapFromName)
+                                    SyntaxFactory.IdentifierName(classToMapFromName)
                                 )
                         )
                     )
                 )
                 .WithBody
                 (
-                    Block
+                    SyntaxFactory.Block
                     (
-                        SingletonList<StatementSyntax>
+                        SyntaxFactory.SingletonList<StatementSyntax>
                         (
-                            ReturnStatement
+                            SyntaxFactory.ReturnStatement
                             (
-                                ObjectCreationExpression
+                                SyntaxFactory.ObjectCreationExpression
                                     (
-                                        IdentifierName(classToMapToTypeSymbol.Name)
+                                        SyntaxFactory.IdentifierName(classToMapToTypeSymbol.Name)
                                     )
                                     .WithArgumentList
                                     (
-                                        ArgumentList()
+                                        SyntaxFactory.ArgumentList()
                                     )
                                     .WithInitializer
                                     (
-                                        InitializerExpression
+                                        SyntaxFactory.InitializerExpression
                                         (
                                             SyntaxKind.ObjectInitializerExpression,
-                                            SeparatedList<ExpressionSyntax>
+                                            SyntaxFactory.SeparatedList<ExpressionSyntax>
                                             (
                                                 assignmentExpressionSyntaxs
                                             )
@@ -134,56 +134,56 @@ namespace DesignTimeMapper.Engine
 
             var inputArgName = originalClassName.ToCamelCase();
             var assignmentExpressionSyntaxs = GetAssignmentExpressionSyntaxs(properties, inputArgName);
-            return MethodDeclaration
+            return SyntaxFactory.MethodDeclaration
                 (
-                    IdentifierName(newClassName),
-                    Identifier("Create")
+                    SyntaxFactory.IdentifierName(newClassName),
+                    SyntaxFactory.Identifier("Create")
                 )
                 .WithModifiers
                 (
-                    TokenList
-                    (Token(SyntaxKind.PublicKeyword),
-                        Token(SyntaxKind.StaticKeyword))
+                    SyntaxFactory.TokenList
+                    (SyntaxFactory.Token(SyntaxKind.PublicKeyword),
+                        SyntaxFactory.Token(SyntaxKind.StaticKeyword))
                 )
                 .WithParameterList
                 (
-                    ParameterList
+                    SyntaxFactory.ParameterList
                     (
-                        SingletonSeparatedList
+                        SyntaxFactory.SingletonSeparatedList
                         (
-                            Parameter
+                            SyntaxFactory.Parameter
                                 (
-                                    Identifier(inputArgName)
+                                    SyntaxFactory.Identifier(inputArgName)
                                 )
                                 .WithType
                                 (
-                                    IdentifierName(originalClassName)
+                                    SyntaxFactory.IdentifierName(originalClassName)
                                 )
                         )
                     )
                 )
                 .WithBody
                 (
-                    Block
+                    SyntaxFactory.Block
                     (
-                        SingletonList<StatementSyntax>
+                        SyntaxFactory.SingletonList<StatementSyntax>
                         (
-                            ReturnStatement
+                            SyntaxFactory.ReturnStatement
                             (
-                                ObjectCreationExpression
+                                SyntaxFactory.ObjectCreationExpression
                                     (
-                                        IdentifierName(newClassName)
+                                        SyntaxFactory.IdentifierName(newClassName)
                                     )
                                     .WithArgumentList
                                     (
-                                        ArgumentList()
+                                        SyntaxFactory.ArgumentList()
                                     )
                                     .WithInitializer
                                     (
-                                        InitializerExpression
+                                        SyntaxFactory.InitializerExpression
                                         (
                                             SyntaxKind.ObjectInitializerExpression,
-                                            SeparatedList<ExpressionSyntax>
+                                            SyntaxFactory.SeparatedList<ExpressionSyntax>
                                             (
                                                 assignmentExpressionSyntaxs
                                             )
@@ -203,17 +203,17 @@ namespace DesignTimeMapper.Engine
                 var prop = (PropertyDeclarationSyntax)memberDeclarationSyntax;
                 var name = prop.Identifier.ToString();
 
-                yield return AssignmentExpression
+                yield return SyntaxFactory.AssignmentExpression
                 (
                     SyntaxKind
                         .SimpleAssignmentExpression,
-                    IdentifierName(name),
-                    MemberAccessExpression
+                    SyntaxFactory.IdentifierName(name),
+                    SyntaxFactory.MemberAccessExpression
                     (
                         SyntaxKind
                             .SimpleMemberAccessExpression,
-                        IdentifierName(inputArgName),
-                        IdentifierName(name)
+                        SyntaxFactory.IdentifierName(inputArgName),
+                        SyntaxFactory.IdentifierName(name)
                     )
                 );
             }

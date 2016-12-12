@@ -1,16 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using DesignTimeMapper.Engine.Interface;
-using DesignTimeMapper.Engine.Model;
+using DesignTimeMapper.Interface;
+using DesignTimeMapper.Model;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Editing;
 using Microsoft.CodeAnalysis.Text;
-using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
-namespace DesignTimeMapper.Engine
+namespace DesignTimeMapper
 {
     public class ClassMapper
     {
@@ -22,24 +21,24 @@ namespace DesignTimeMapper.Engine
             var newClassName = "DesignTimeMapper";
 
 
-            var newClass = CompilationUnit()
+            var newClass = SyntaxFactory.CompilationUnit()
                 .WithMembers
                 (
-                    List
+                    SyntaxFactory.List
                     (
                         new MemberDeclarationSyntax[]
                         {
-                            NamespaceDeclaration(IdentifierName(newNamespaceName))
+                            SyntaxFactory.NamespaceDeclaration(SyntaxFactory.IdentifierName(newNamespaceName))
                             .WithMembers(
-                                SingletonList<MemberDeclarationSyntax>(
-                                    ClassDeclaration(newClassName)
+                                SyntaxFactory.SingletonList<MemberDeclarationSyntax>(
+                                    SyntaxFactory.ClassDeclaration(newClassName)
                                         .WithMembers
                                         (
-                                            List
+                                            SyntaxFactory.List
                                             (
                                                 methods.Select(m => m.Method)
                                             )
-                                        ).WithModifiers(TokenList(Token(SyntaxKind.PublicKeyword)))
+                                        ).WithModifiers(SyntaxFactory.TokenList(SyntaxFactory.Token(SyntaxKind.PublicKeyword)))
                                 ))
                         }
                     )
@@ -49,7 +48,7 @@ namespace DesignTimeMapper.Engine
             {
                 foreach (var u in methodWithUsingse.Usings)
                 {
-                    newClass = newClass.AddUsings(UsingDirective(ParseName(u)));
+                    newClass = newClass.AddUsings(SyntaxFactory.UsingDirective(SyntaxFactory.ParseName(u)));
                 }
             }
 
@@ -102,23 +101,23 @@ namespace DesignTimeMapper.Engine
 
             properties.AddRange(TryGetClassProperties(nsMember));
             var mapperMethod = _mapperMethodGenerator.CreateMapperMethod(nsMember, properties, newClassName);
-            var compilationUnitSyntax = CompilationUnit()
+            var compilationUnitSyntax = SyntaxFactory.CompilationUnit()
                 .WithMembers
                 (
-                    List
+                    SyntaxFactory.List
                     (
                         new MemberDeclarationSyntax[]
                         {
-                            NamespaceDeclaration(IdentifierName(newNamespaceName)).WithMembers(
-                                SingletonList<MemberDeclarationSyntax>(
-                                    ClassDeclaration(newClassName)
+                            SyntaxFactory.NamespaceDeclaration(SyntaxFactory.IdentifierName(newNamespaceName)).WithMembers(
+                                SyntaxFactory.SingletonList<MemberDeclarationSyntax>(
+                                    SyntaxFactory.ClassDeclaration(newClassName)
                                         .WithMembers
                                         (
-                                            List
+                                            SyntaxFactory.List
                                             (
                                                 properties.Concat(new[] {mapperMethod})
                                             )
-                                        ).WithModifiers(TokenList(Token(SyntaxKind.PublicKeyword)))
+                                        ).WithModifiers(SyntaxFactory.TokenList(SyntaxFactory.Token(SyntaxKind.PublicKeyword)))
                                 ))
                         }
                     )

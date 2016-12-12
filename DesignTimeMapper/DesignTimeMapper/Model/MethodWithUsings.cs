@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-namespace DesignTimeMapper.Engine.Model
+namespace DesignTimeMapper.Model
 {
     public class MethodWithUsings
     {

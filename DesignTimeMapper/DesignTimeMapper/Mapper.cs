@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.MSBuild;
 
-namespace DesignTimeMapper.Engine
+namespace DesignTimeMapper
 {
     public class Mapper
     {

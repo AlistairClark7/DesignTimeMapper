@@ -1,8 +1,7 @@
 ﻿using System;
 using System.IO;
-using DesignTimeMapper.Engine;
 
-namespace DesignTimeMapper
+namespace DesignTimeMapper.CommandLine
 {
     class Program
     {
