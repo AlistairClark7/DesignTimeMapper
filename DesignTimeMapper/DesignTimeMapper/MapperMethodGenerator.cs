@@ -40,14 +40,14 @@ namespace DesignTimeMapper
             return methodDeclarationSyntaxs;
         }
 
-        private MethodWithUsings CreateMapperMethod(INamedTypeSymbol classToMapToTypeSymbol, INamedTypeSymbol attributeTypeSymbol)
+        private MethodWithUsings CreateMapperMethod(INamedTypeSymbol classToMapToTypeSymbol, INamedTypeSymbol classToMapFromTypeSymbol)
         {
-            var inputArgName = attributeTypeSymbol.Name.ToCamelCase();
+            var inputArgName = classToMapFromTypeSymbol.Name.ToCamelCase();
             string classToMapFromName;
-            if (classToMapToTypeSymbol.ContainingNamespace.GetFullMetadataName() == attributeTypeSymbol.ContainingNamespace.GetFullMetadataName())
-                classToMapFromName = attributeTypeSymbol.Name;
+            if (classToMapToTypeSymbol.ContainingNamespace.GetFullMetadataName() == classToMapFromTypeSymbol.ContainingNamespace.GetFullMetadataName())
+                classToMapFromName = classToMapFromTypeSymbol.Name;
             else
-                 classToMapFromName = attributeTypeSymbol.GetFullMetadataName();
+                 classToMapFromName = classToMapFromTypeSymbol.GetFullMetadataName();
             
 
             List<MemberDeclarationSyntax> properties = new List<MemberDeclarationSyntax>();
