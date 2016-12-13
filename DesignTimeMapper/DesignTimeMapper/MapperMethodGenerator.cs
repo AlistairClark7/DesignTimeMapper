@@ -43,7 +43,7 @@ namespace DesignTimeMapper
         private MethodWithUsings CreateMapperMethod(INamedTypeSymbol classToMapToTypeSymbol, INamedTypeSymbol attributeTypeSymbol)
         {
             var inputArgName = attributeTypeSymbol.Name.ToCamelCase();
-            var classToMapFromName = attributeTypeSymbol.Name;
+            var classToMapFromName = attributeTypeSymbol.GetFullMetadataName();
 
             List<MemberDeclarationSyntax> properties = new List<MemberDeclarationSyntax>();
             foreach (var declaringSyntaxReference in classToMapToTypeSymbol.DeclaringSyntaxReferences)
@@ -114,10 +114,9 @@ namespace DesignTimeMapper
             var withUsings = new MethodWithUsings
             {
                 Method = methodDeclaration,
-                Usings = new List<string>
+                Usings = new List<INamespaceSymbol>
                 {
-                    attributeTypeSymbol.ContainingNamespace.GetFullMetadataName(),
-                    classToMapToTypeSymbol.ContainingNamespace.GetFullMetadataName()
+                    classToMapToTypeSymbol.ContainingNamespace
                 }
             };
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using DesignTimeMapper.Extensions;
 using DesignTimeMapper.Interface;
 using DesignTimeMapper.Model;
 using Microsoft.CodeAnalysis;
@@ -48,7 +49,7 @@ namespace DesignTimeMapper
             {
                 foreach (var u in methodWithUsingse.Usings)
                 {
-                    newClass = newClass.AddUsings(SyntaxFactory.UsingDirective(SyntaxFactory.ParseName(u)));
+                    newClass = newClass.AddUsings(SyntaxFactory.UsingDirective(SyntaxFactory.ParseName(u.GetFullMetadataName())));
                 }
             }
 
