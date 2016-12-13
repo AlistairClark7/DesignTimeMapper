@@ -1,9 +1,9 @@
 ﻿using System.Device.Location;
-using DesignTimeMapper.Attributes;
+//using DesignTimeMapper.Attributes;
 
 namespace DesignTimeMapper.ExamplePocos
 {
-    [MapFrom(typeof(CivicAddress))]
+    //[MapFrom(typeof(CivicAddress))]
     public class AddressDto
     {
         public string AddressLine1 { get; set; }
