@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using DesignTimeMapper.Attributes;
 using DesignTimeMapper.Extensions;
@@ -49,12 +50,13 @@ namespace DesignTimeMapper.MapperGeneration
                  classToMapFromName = classToMapFromTypeSymbol.GetFullMetadataName();
             
 
-            List<MemberDeclarationSyntax> properties = new List<MemberDeclarationSyntax>();
+            List<MemberDeclarationSyntax> classToMapToProperties = new List<MemberDeclarationSyntax>();
             foreach (var declaringSyntaxReference in classToMapToTypeSymbol.DeclaringSyntaxReferences)
             {
-                properties.AddRange(declaringSyntaxReference.GetSyntax().DescendantNodesAndSelf().OfType<PropertyDeclarationSyntax>());
+                classToMapToProperties.AddRange(declaringSyntaxReference.GetSyntax().DescendantNodesAndSelf().OfType<PropertyDeclarationSyntax>());
             }
-            var assignmentExpressionSyntaxs = GetAssignmentExpressionSyntaxs(properties, inputArgName);
+            List<ISymbol> classToMapFromSymbols = classToMapFromTypeSymbol.GetMembers().Where(m => m.Kind == SymbolKind.Property).ToList();
+            var assignmentExpressionSyntaxs = GetAssignmentExpressionSyntaxs(classToMapToProperties, classToMapFromSymbols, inputArgName);
             var methodDeclaration = SyntaxFactory.MethodDeclaration
                 (
                     SyntaxFactory.IdentifierName(classToMapToTypeSymbol.Name),
@@ -128,12 +130,16 @@ namespace DesignTimeMapper.MapperGeneration
         }
 
         
-        private static IEnumerable<AssignmentExpressionSyntax> GetAssignmentExpressionSyntaxs(List<MemberDeclarationSyntax> properties, string inputArgName)
+        private static IEnumerable<AssignmentExpressionSyntax> GetAssignmentExpressionSyntaxs(List<MemberDeclarationSyntax> properties, List<ISymbol> classToMapFromSymbols, string inputArgName)
         {
             foreach (var memberDeclarationSyntax in properties)
             {
                 var prop = (PropertyDeclarationSyntax)memberDeclarationSyntax;
                 var name = prop.Identifier.ToString();
+
+                string classToMapFromPropertyName;
+
+                classToMapFromPropertyName = GetClassToMapFromQualifiedPropertyName(classToMapFromSymbols, name);
 
                 yield return SyntaxFactory.AssignmentExpression
                 (
@@ -145,9 +151,73 @@ namespace DesignTimeMapper.MapperGeneration
                         SyntaxKind
                             .SimpleMemberAccessExpression,
                         SyntaxFactory.IdentifierName(inputArgName),
-                        SyntaxFactory.IdentifierName(name)
+                        SyntaxFactory.IdentifierName(classToMapFromPropertyName)
                     )
                 );
+            }
+        }
+
+        private static string GetClassToMapFromQualifiedPropertyName(List<ISymbol> classToMapFromSymbols, string propertyToMapToName)
+        {
+            var simpleProperty = classToMapFromSymbols.FirstOrDefault(s => s.Name == propertyToMapToName);
+
+            if (simpleProperty != null)
+            {
+                return simpleProperty.Name;
+            }
+
+            return GetComplexPropertyName(classToMapFromSymbols, propertyToMapToName);
+        }
+
+        private static string GetComplexPropertyName(List<ISymbol> classToMapFromSymbols, string propertyToMapToName)
+        {
+            //TODO: make recursive and search remaining split names to see if they match eg. [.,..,...,....] 
+            var splitNames = SplitStringOnCapital(propertyToMapToName).ToList();
+
+            for (int i = 0; i < splitNames.Count; i++)
+            {
+                var splitName = splitNames[i];
+
+                var property = classToMapFromSymbols.FirstOrDefault(s => s.Name == splitName) as IPropertySymbol;
+
+                if (property == null) continue;
+
+                var isLast = splitNames.Count - i - 2 == 0;
+
+                var type = property.Type;
+                var subPropertyName = string.Concat(splitNames.GetRange(i + 1, splitNames.Count - i - 1));
+                var subProperty = type.GetMembers().Where(m => m.Kind == SymbolKind.Property).FirstOrDefault(s => s.Name == subPropertyName);
+                if (subProperty == null) continue;
+
+                if (isLast)
+                {
+                    return string.Join(".", splitNames);
+                }
+            }
+
+            return propertyToMapToName;
+        }
+
+        private static IEnumerable<string> SplitStringOnCapital(string str)
+        {
+            int lastStart = 0;
+            for (int i = 0; i < str.Length; i++)
+            {
+                if(i == 0) continue;
+
+                var c = str[i];
+
+                if (i == str.Length - 1)
+                {
+                    yield return str.Substring(lastStart);
+                }
+
+                if (char.IsUpper(c))
+                {
+                    var s = str.Substring(lastStart, i - lastStart);
+                    lastStart = i;
+                    yield return s;
+                }
             }
         }
     }
