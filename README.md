@@ -1,5 +1,5 @@
 # DesignTimeMapper
-Visual Studio extension for creating DTO/mapped objects.
+Visual Studio extension for creating object-object mapping methods.
 
 ## How to install ##
 
