@@ -37,12 +37,16 @@ namespace DesignTimeMapper.MapperGeneration
                         }
                     )
                 );
-            
+
+            HashSet<string> usings = new HashSet<string> {namespaceName};
             foreach (var methodWithUsingse in methods)
             {
-                foreach (var u in methodWithUsingse.Usings)
+                foreach (var name in methodWithUsingse.Usings.Select(u => u.GetFullMetadataName()).Distinct())
                 {
-                    newClass = newClass.AddUsings(SyntaxFactory.UsingDirective(SyntaxFactory.ParseName(u.GetFullMetadataName())));
+                    if(usings.Contains(name)) continue;
+
+                    newClass = newClass.AddUsings(SyntaxFactory.UsingDirective(SyntaxFactory.ParseName(name)));
+                    usings.Add(name);
                 }
             }
 
