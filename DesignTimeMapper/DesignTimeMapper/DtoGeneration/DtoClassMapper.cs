@@ -10,52 +10,12 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Editing;
 using Microsoft.CodeAnalysis.Text;
 
-namespace DesignTimeMapper
+namespace DesignTimeMapper.DtoGeneration
 {
-    public class ClassMapper
+    public class DtoClassMapper
     {
-        private IMapperMethodGenerator _mapperMethodGenerator = new MapperMethodGenerator();
-
-        public SourceText CreateMapClass(Workspace workspace, IEnumerable<MethodWithUsings> methods)
-        {
-            var newNamespaceName = "TestNameSpace";
-            var newClassName = "DesignTimeMapper";
-
-
-            var newClass = SyntaxFactory.CompilationUnit()
-                .WithMembers
-                (
-                    SyntaxFactory.List
-                    (
-                        new MemberDeclarationSyntax[]
-                        {
-                            SyntaxFactory.NamespaceDeclaration(SyntaxFactory.IdentifierName(newNamespaceName))
-                            .WithMembers(
-                                SyntaxFactory.SingletonList<MemberDeclarationSyntax>(
-                                    SyntaxFactory.ClassDeclaration(newClassName)
-                                        .WithMembers
-                                        (
-                                            SyntaxFactory.List
-                                            (
-                                                methods.Select(m => m.Method)
-                                            )
-                                        ).WithModifiers(SyntaxFactory.TokenList(SyntaxFactory.Token(SyntaxKind.PublicKeyword)))
-                                ))
-                        }
-                    )
-                );
-            
-            foreach (var methodWithUsingse in methods)
-            {
-                foreach (var u in methodWithUsingse.Usings)
-                {
-                    newClass = newClass.AddUsings(SyntaxFactory.UsingDirective(SyntaxFactory.ParseName(u.GetFullMetadataName())));
-                }
-            }
-
-            return newClass.NormalizeWhitespace().GetText();
-        }
-
+        private IDtoMapperMethodGenerator _mapperMethodGenerator = new DtoMapperMethodGenerator();
+        
         public string CreateMapClass(string classText, string newNamespaceName, string newClassPrefix, string newClassSuffix)
         {
             var workspace = new AdhocWorkspace();

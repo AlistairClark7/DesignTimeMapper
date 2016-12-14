@@ -8,8 +8,5 @@ namespace DesignTimeMapper.Interface
     public interface IMapperMethodGenerator
     {
         IList<MethodWithUsings> CreateMapperMethods(Compilation compilation);
-
-        MethodDeclarationSyntax CreateMapperMethod(MemberDeclarationSyntax originalClass,
-            List<MemberDeclarationSyntax> properties, string newClassName);
     }
 }

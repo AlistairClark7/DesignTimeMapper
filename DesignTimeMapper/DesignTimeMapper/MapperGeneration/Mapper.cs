@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.MSBuild;
 
-namespace DesignTimeMapper
+namespace DesignTimeMapper.MapperGeneration
 {
     public class Mapper
     {
@@ -17,7 +17,7 @@ namespace DesignTimeMapper
             var mappedMethods = mapperMethodGenerator.CreateMapperMethods(compilation);
 
             var classMapper = new ClassMapper();
-            var newClass = classMapper.CreateMapClass(msWorkspace, mappedMethods);
+            var newClass = classMapper.CreateMapClass(mappedMethods);
 
             var existing = project.Documents.FirstOrDefault(d => d.Name == "DesignTimeMapper.cs");
 

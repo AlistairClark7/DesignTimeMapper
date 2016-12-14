@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Text.RegularExpressions;
+using DesignTimeMapper.DtoGeneration;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace DesignTimeMapper.Engine.Tests.Unit
@@ -24,7 +25,7 @@ namespace DesignTimeMapper.Engine.Tests.Unit
             var newClassName = "SimpleClassDto";
             var newClassSuffix = "Dto";
 
-            var mappedClass = new ClassMapper().CreateMapClass(template, newNamespace, string.Empty, newClassSuffix);
+            var mappedClass = new DtoClassMapper().CreateMapClass(template, newNamespace, string.Empty, newClassSuffix);
 
             var expected = $@"namespace {newNamespace}
                 {{

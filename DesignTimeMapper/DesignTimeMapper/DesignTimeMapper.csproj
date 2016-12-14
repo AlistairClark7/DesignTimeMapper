@@ -164,10 +164,13 @@
   <ItemGroup>
     <Compile Include="Attributes\MapFromAttribute.cs" />
     <None Include="build\DesignTimeMapper.targets" />
+    <Compile Include="DtoGeneration\DtoClassMapper.cs" />
+    <Compile Include="DtoGeneration\DtoMapperMethodGenerator.cs" />
+    <Compile Include="Interface\IDtoMapperMethodGenerator.cs" />
     <Compile Include="Interface\IMapperMethodGenerator.cs" />
-    <Compile Include="Mapper.cs" />
-    <Compile Include="ClassMapper.cs" />
-    <Compile Include="MapperMethodGenerator.cs" />
+    <Compile Include="MapperGeneration\Mapper.cs" />
+    <Compile Include="MapperGeneration\ClassMapper.cs" />
+    <Compile Include="MapperGeneration\MapperMethodGenerator.cs" />
     <Compile Include="Model\MethodWithUsings.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Extensions\RoslynExtensions.cs" />
