@@ -162,6 +162,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Attributes\DoNotMapAttribute.cs" />
     <Compile Include="Attributes\MapFromAttribute.cs" />
     <None Include="build\DesignTimeMapper.targets" />
     <Compile Include="DtoGeneration\DtoClassMapper.cs" />

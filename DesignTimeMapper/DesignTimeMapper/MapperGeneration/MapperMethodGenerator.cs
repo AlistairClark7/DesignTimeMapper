@@ -137,7 +137,7 @@ namespace DesignTimeMapper.MapperGeneration
             {
                 //TODO optimise this
                 var potentialName = string.Join("", parents.Select(p => p.Name).Concat(new [] { symbol.Name} ));
-                var matchingSymbol = classToMapToSymbols.FirstOrDefault(s => s.Name == potentialName);
+                var matchingSymbol = classToMapToSymbols.FirstOrDefault(s => s.Name == potentialName && !s.GetAttributes().Any(a => a.AttributeClass.Name == nameof(DoNotMapAttribute)));
 
                 if (matchingSymbol != null)
                 {
