@@ -8,7 +8,7 @@
   </PropertyGroup>
   <Target Name="DesignTimeMapperTarget">
     <PropertyGroup>
-      <PreBuildEvent>"$(SolutionDir)packages\DesignTimeMapper.0.1.0\build\DesignTimeMapper.CommandLine.exe" "$(SolutionPath)" "$(MSBuildProjectName)"</PreBuildEvent>
+      <PreBuildEvent>"$(SolutionDir)packages\DesignTimeMapper.0.2.2\build\DesignTimeMapper.CommandLine.exe" "$(SolutionPath)" "$(MSBuildProjectName)"</PreBuildEvent>
     </PropertyGroup>
   </Target>
 </Project>
