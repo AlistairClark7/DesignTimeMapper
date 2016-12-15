@@ -1,12 +1,9 @@
-﻿using System.Linq;
-using System.Threading.Tasks;
-using System.Xml.Linq;
+﻿using System.Threading.Tasks;
 using DesignTimeMapper.MapperGeneration;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.MSBuild;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace DesignTimeMapper.Engine.Tests.Integration
+namespace DesignTimeMapper.Tests.Integration
 {
     [TestClass]
     public class MapperMethodGeneratorIntegrationTests

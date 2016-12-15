@@ -3,7 +3,7 @@ using System.Text.RegularExpressions;
 using DesignTimeMapper.DtoGeneration;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace DesignTimeMapper.Engine.Tests.Unit
+namespace DesignTimeMapper.Tests.Unit
 {
     [TestClass]
     public class SimpleClassTests

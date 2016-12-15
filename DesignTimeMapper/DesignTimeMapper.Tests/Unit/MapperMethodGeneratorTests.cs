@@ -1,9 +1,6 @@
-﻿using System;
-using System.Text;
-using System.Collections.Generic;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace DesignTimeMapper.Engine.Tests.Unit
+namespace DesignTimeMapper.Tests.Unit
 {
     [TestClass]
     public class MapperMethodGeneratorTests
