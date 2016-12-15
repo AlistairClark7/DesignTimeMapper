@@ -250,4 +250,4 @@ paket-files/
 # JetBrains Rider
 .idea/
 *.sln.iml
-/DesignTimeMapper/DesignTimeMapper/tools/DesignTimeMapper.CommandLine.exe
+/Source/DesignTimeMapper/DesignTimeMapper/tools/DesignTimeMapper.CommandLine.exe
