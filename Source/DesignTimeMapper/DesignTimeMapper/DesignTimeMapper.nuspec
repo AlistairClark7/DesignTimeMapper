@@ -10,12 +10,18 @@
     <projectUrl>https://github.com/AlistairClark7/DesignTimeMapper</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Tool that uses Roslyn to automatically create object-object mapper methods</description>
-    <releaseNotes>Fixed issue with incorrect version of design time mapper in targets path causing the build to fail</releaseNotes>
+    <releaseNotes>Removed Roslyn references, and added versions targeting .NET 3.5, 4.0 and 4.5</releaseNotes>
     <copyright>Copyright 2016</copyright>
     <tags></tags>
   </metadata>
   <files>
     <file src="build\**" target="build" />
-    <file src="tools\**" target="build" />
+    <file src="tools\**" target="build" />  
+	<file src="bin\Release\net35\DesignTimeMapper.pdb" target="lib\net35\DesignTimeMapper.pdb" />
+    <file src="bin\Release\net35\DesignTimeMapper.dll" target="lib\net35\DesignTimeMapper.xml" /> 
+	<file src="bin\Release\net40\DesignTimeMapper.pdb" target="lib\net40\DesignTimeMapper.pdb" />
+    <file src="bin\Release\net40\DesignTimeMapper.dll" target="lib\net40\DesignTimeMapper.xml" /> 
+	<file src="bin\Release\net45\DesignTimeMapper.pdb" target="lib\net45\DesignTimeMapper.pdb" />
+    <file src="bin\Release\net45\DesignTimeMapper.dll" target="lib\net45\DesignTimeMapper.xml" />   
   </files>
 </package>
