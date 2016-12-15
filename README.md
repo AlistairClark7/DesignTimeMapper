@@ -3,7 +3,7 @@ Visual Studio extension for creating object-object mapping methods.
 
 ## How to install ##
 
-Install from nuget. Use the command `Install-Package DesignTimeMapper -Pre`
+Install from nuget. Use the command `Install-Package DesignTimeMapper`
 
 ## How to use ##
 
@@ -40,4 +40,4 @@ More details and features to come later!
 
 There are no checks for types during the mapping - so it may generate code that does not compile.
 Does not currently check that each property is writable - so again you may get generated code that does not compile.
-The current nuget package is a pre-release (alpha) so there are likely to be problems. Please open an issue with any details of the problem.
+This is an early version so there are likely to be problems. Please open an issue with any details of the problem.
