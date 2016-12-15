@@ -1,16 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using DesignTimeMapper.Extensions;
-using DesignTimeMapper.Interface;
-using DesignTimeMapper.Model;
+using DesignTimeMapper.Engine.Interface;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Editing;
-using Microsoft.CodeAnalysis.Text;
 
-namespace DesignTimeMapper.DtoGeneration
+namespace DesignTimeMapper.Engine.DtoGeneration
 {
     public class DtoClassMapper
     {

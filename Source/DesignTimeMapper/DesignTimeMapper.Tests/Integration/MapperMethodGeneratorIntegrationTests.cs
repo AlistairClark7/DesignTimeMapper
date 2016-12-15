@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-using DesignTimeMapper.MapperGeneration;
+using DesignTimeMapper.Engine.MapperGeneration;
 using Microsoft.CodeAnalysis.MSBuild;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 

@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Text.RegularExpressions;
-using DesignTimeMapper.DtoGeneration;
+using DesignTimeMapper.Engine.DtoGeneration;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace DesignTimeMapper.Tests.Unit

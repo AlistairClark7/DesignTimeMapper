@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace DesignTimeMapper.Extensions
+namespace DesignTimeMapper.Engine.Extensions
 {
     public static class StringExtensions
     {

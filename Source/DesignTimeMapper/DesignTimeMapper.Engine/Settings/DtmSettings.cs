@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace DesignTimeMapper.Settings
+namespace DesignTimeMapper.Engine.Settings
 {
     public class DtmSettings
     {

@@ -1,13 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using DesignTimeMapper.Extensions;
-using DesignTimeMapper.Model;
+using DesignTimeMapper.Engine.Extensions;
+using DesignTimeMapper.Engine.Model;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
 
-namespace DesignTimeMapper.MapperGeneration
+namespace DesignTimeMapper.Engine.MapperGeneration
 {
     public class ClassMapper
     {

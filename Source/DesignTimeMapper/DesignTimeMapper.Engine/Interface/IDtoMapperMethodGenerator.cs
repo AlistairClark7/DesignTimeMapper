@@ -1,9 +1,7 @@
 ﻿using System.Collections.Generic;
-using DesignTimeMapper.Model;
-using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-namespace DesignTimeMapper.Interface
+namespace DesignTimeMapper.Engine.Interface
 {
     public interface IDtoMapperMethodGenerator
     {

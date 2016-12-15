@@ -184,7 +184,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DesignTimeMapper\DesignTimeMapper.csproj">
-      <Project>{33e194b0-2638-4a3a-8701-379304ef0860}</Project>
+      <Project>{a1c61131-b44d-4101-bcd7-9934e7be4d75}</Project>
       <Name>DesignTimeMapper</Name>
     </ProjectReference>
   </ItemGroup>

@@ -1,6 +1,6 @@
 ﻿using System;
 using System.IO;
-using DesignTimeMapper.MapperGeneration;
+using DesignTimeMapper.Engine.MapperGeneration;
 
 namespace DesignTimeMapper.CommandLine
 {

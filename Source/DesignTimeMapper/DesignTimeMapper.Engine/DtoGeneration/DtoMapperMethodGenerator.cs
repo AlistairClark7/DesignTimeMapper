@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using DesignTimeMapper.Extensions;
-using DesignTimeMapper.Interface;
+using DesignTimeMapper.Engine.Extensions;
+using DesignTimeMapper.Engine.Interface;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-namespace DesignTimeMapper.DtoGeneration
+namespace DesignTimeMapper.Engine.DtoGeneration
 {
     public class DtoMapperMethodGenerator : IDtoMapperMethodGenerator
     {

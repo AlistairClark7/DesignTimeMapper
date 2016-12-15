@@ -1,9 +1,8 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
-using DesignTimeMapper.Extensions;
 using Microsoft.CodeAnalysis.MSBuild;
 
-namespace DesignTimeMapper.MapperGeneration
+namespace DesignTimeMapper.Engine.MapperGeneration
 {
     public class Mapper
     {

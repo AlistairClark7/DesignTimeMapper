@@ -1,15 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using DesignTimeMapper.Attributes;
-using DesignTimeMapper.Extensions;
-using DesignTimeMapper.Interface;
-using DesignTimeMapper.Model;
+using DesignTimeMapper.Engine.Extensions;
+using DesignTimeMapper.Engine.Interface;
+using DesignTimeMapper.Engine.Model;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-namespace DesignTimeMapper.MapperGeneration
+namespace DesignTimeMapper.Engine.MapperGeneration
 {
     public class MapperMethodGenerator : IMapperMethodGenerator
     {

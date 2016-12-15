@@ -2,7 +2,7 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-namespace DesignTimeMapper.Model
+namespace DesignTimeMapper.Engine.Model
 {
     public class MethodWithUsings
     {
