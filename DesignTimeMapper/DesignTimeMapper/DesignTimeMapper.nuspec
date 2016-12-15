@@ -10,7 +10,7 @@
     <projectUrl>https://github.com/AlistairClark7/DesignTimeMapper</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Tool that uses Roslyn to automatically create object-object mapper methods</description>
-    <releaseNotes>SInitial release</releaseNotes>
+    <releaseNotes>Initial release</releaseNotes>
     <copyright>Copyright 2016</copyright>
     <tags></tags>
   </metadata>

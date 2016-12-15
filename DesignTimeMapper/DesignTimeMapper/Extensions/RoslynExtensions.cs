@@ -5,16 +5,16 @@ namespace DesignTimeMapper.Extensions
 {
     public static class RoslynExtensions
     {
-        public static string GetFullMetadataName(this INamespaceOrTypeSymbol symbol)
-        {
-            ISymbol s = symbol;
-            var sb = new StringBuilder(s.MetadataName);
 
-            var last = s;
-            s = s.ContainingSymbol;
-            while (!IsRootNamespace(s))
+        public static string GetFullMetadataName(this ISymbol symbol)
+        {
+            var sb = new StringBuilder(symbol.MetadataName);
+
+            var last = symbol;
+            symbol = symbol.ContainingSymbol;
+            while (!IsRootNamespace(symbol))
             {
-                if (s is ITypeSymbol && last is ITypeSymbol)
+                if (symbol is ITypeSymbol && last is ITypeSymbol)
                 {
                     sb.Insert(0, '+');
                 }
@@ -22,12 +22,13 @@ namespace DesignTimeMapper.Extensions
                 {
                     sb.Insert(0, '.');
                 }
-                sb.Insert(0, s.MetadataName);
-                s = s.ContainingSymbol;
+                sb.Insert(0, symbol.MetadataName);
+                symbol = symbol.ContainingSymbol;
             }
 
             return sb.ToString();
         }
+
 
         private static bool IsRootNamespace(ISymbol s)
         {

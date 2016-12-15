@@ -11,9 +11,8 @@ namespace DesignTimeMapper.MapperGeneration
 {
     public class ClassMapper
     {
-        public SourceText CreateMapClass(IEnumerable<MethodWithUsings> methods)
+        public SourceText CreateMapClass(IEnumerable<MethodWithUsings> methods, string namespaceName)
         {
-            var newNamespaceName = "TestNameSpace";
             var newClassName = "DesignTimeMapper";
             
             var newClass = SyntaxFactory.CompilationUnit()
@@ -23,7 +22,7 @@ namespace DesignTimeMapper.MapperGeneration
                     (
                         new MemberDeclarationSyntax[]
                         {
-                            SyntaxFactory.NamespaceDeclaration(SyntaxFactory.IdentifierName(newNamespaceName))
+                            SyntaxFactory.NamespaceDeclaration(SyntaxFactory.IdentifierName(namespaceName))
                             .WithMembers(
                                 SyntaxFactory.SingletonList<MemberDeclarationSyntax>(
                                     SyntaxFactory.ClassDeclaration(newClassName)
@@ -38,12 +37,16 @@ namespace DesignTimeMapper.MapperGeneration
                         }
                     )
                 );
-            
+
+            HashSet<string> usings = new HashSet<string> {namespaceName};
             foreach (var methodWithUsingse in methods)
             {
-                foreach (var u in methodWithUsingse.Usings)
+                foreach (var name in methodWithUsingse.Usings.Select(u => u.GetFullMetadataName()).Distinct())
                 {
-                    newClass = newClass.AddUsings(SyntaxFactory.UsingDirective(SyntaxFactory.ParseName(u.GetFullMetadataName())));
+                    if(usings.Contains(name)) continue;
+
+                    newClass = newClass.AddUsings(SyntaxFactory.UsingDirective(SyntaxFactory.ParseName(name)));
+                    usings.Add(name);
                 }
             }
 
