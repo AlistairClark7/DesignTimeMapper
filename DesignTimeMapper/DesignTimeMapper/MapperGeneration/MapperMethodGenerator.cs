@@ -16,22 +16,30 @@ namespace DesignTimeMapper.MapperGeneration
         public IList<MethodWithUsings> CreateMapperMethods(Compilation compilation)
         {
             var methodDeclarationSyntaxs = new List<MethodWithUsings>();
-            foreach (var ns in compilation.Assembly.GlobalNamespace.GetNamespaceMembers())
-            {
-                foreach (var namespaceMember in ns.GetNamespaceMembers())
-                {
-                    foreach (var typeMember in namespaceMember.GetTypeMembers())
-                    {
-                        foreach (var attributeData in typeMember.GetAttributes().Where(a => a.AttributeClass.Name == nameof(MapFromAttribute)))
-                        {
-                            var type = attributeData.ConstructorArguments[0];
-                            INamedTypeSymbol attributeTypeSymbol = type.Value as INamedTypeSymbol;
 
-                            if (attributeTypeSymbol != null)
-                            {
-                                var withUsings = CreateMapperMethod(typeMember, attributeTypeSymbol);
-                                methodDeclarationSyntaxs.Add(withUsings);
-                            }
+            foreach (
+                var result in
+                compilation.SyntaxTrees.Select(syntaxTree => compilation.GetSemanticModel(syntaxTree))
+                    .Select(
+                        semanticModel =>
+                            semanticModel.SyntaxTree.GetRoot()
+                                .DescendantNodesAndSelf()
+                                .OfType<ClassDeclarationSyntax>()
+                                .Select(
+                                    propertyDeclarationSyntax =>
+                                            semanticModel.GetDeclaredSymbol(propertyDeclarationSyntax))))
+            {
+                foreach (var namedTypeSymbol in result)
+                {
+                    foreach (var attributeData in namedTypeSymbol.GetAttributes().Where(a => a.AttributeClass.Name == nameof(MapFromAttribute)))
+                    {
+                        var type = attributeData.ConstructorArguments[0];
+                        INamedTypeSymbol attributeTypeSymbol = type.Value as INamedTypeSymbol;
+
+                        if (attributeTypeSymbol != null)
+                        {
+                            var withUsings = CreateMapperMethod(namedTypeSymbol, attributeTypeSymbol);
+                            methodDeclarationSyntaxs.Add(withUsings);
                         }
                     }
                 }
