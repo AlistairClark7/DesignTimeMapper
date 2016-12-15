@@ -1,9 +1,9 @@
 # DesignTimeMapper
-Visual Studio extension for creating object-object mapping methods.
+NuGet package for creating object-object mapping methods.
 
 ## How to install ##
 
-Install from nuget. Use the command `Install-Package DesignTimeMapper`
+Install from NuGet. Use the command `Install-Package DesignTimeMapper`
 
 ## How to use ##
 
