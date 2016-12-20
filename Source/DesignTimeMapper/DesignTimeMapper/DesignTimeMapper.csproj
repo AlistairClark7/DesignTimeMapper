@@ -10,7 +10,7 @@
     <RootNamespace>DesignTimeMapper</RootNamespace>
     <AssemblyName>DesignTimeMapper</AssemblyName>
     <FileAlignment>512</FileAlignment>
-    <OutputPath>bin\Release\net35\</OutputPath>
+    <OutputPath>bin\Debug\net35\</OutputPath>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug 3.5|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -19,7 +19,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <OutputPath>bin\Release\net35\</OutputPath>
+    <OutputPath>bin\Debug\net35\</OutputPath>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release 3.5|AnyCPU' ">
