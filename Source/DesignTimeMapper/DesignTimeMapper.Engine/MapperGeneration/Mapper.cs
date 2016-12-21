@@ -19,10 +19,11 @@ namespace DesignTimeMapper.Engine.MapperGeneration
             var classMapper = new ClassMapper();
             var newClass = classMapper.CreateMapClass(mappedMethods, compilation.AssemblyName);
 
-            var existing = project.Documents.FirstOrDefault(d => d.Name == "DesignTimeMapper.cs");
+            var documentName = $"{ClassMapper.MapperClassName}.cs";
+            var existing = project.Documents.FirstOrDefault(d => d.Name == documentName);
 
             var document = existing == null
-                ? project.AddDocument("DesignTimeMapper.cs", newClass)
+                ? project.AddDocument(documentName, newClass)
                 : existing.WithText(newClass);
 
             msWorkspace.TryApplyChanges(document.Project.Solution);

@@ -28,9 +28,11 @@ namespace DesignTimeMapper.Engine.MapperGeneration
 
                         if (attributeTypeSymbol != null)
                         {
-                            var withUsings = CreateMapperMethod(namedTypeSymbol, attributeTypeSymbol);
+                            var mapToWithUsings = CreateMapperMethod(namedTypeSymbol, attributeTypeSymbol);
+                            var mapFromWithUsings = CreateMapperMethod(attributeTypeSymbol, namedTypeSymbol);
 
-                            methodDeclarationSyntaxs.Add(withUsings);
+                            methodDeclarationSyntaxs.Add(mapToWithUsings);
+                            methodDeclarationSyntaxs.Add(mapFromWithUsings);
                         }
 
                     }
@@ -74,9 +76,10 @@ namespace DesignTimeMapper.Engine.MapperGeneration
                 classToMapFromTypeSymbol.GetMembers().Where(m => m.Kind == SymbolKind.Property).Cast<IPropertySymbol>();
             var assignmentExpressionSyntaxs = GetAssignmentExpressionSyntaxs(classToMapToSymbols, classToMapFromSymbols,
                 inputArgName, new IPropertySymbol[0]);
+            var classToMapToName = classToMapToTypeSymbol.GetFullMetadataName();
             var methodDeclaration = SyntaxFactory.MethodDeclaration
                 (
-                    SyntaxFactory.IdentifierName(classToMapToTypeSymbol.Name),
+                    SyntaxFactory.IdentifierName(classToMapToName),
                     SyntaxFactory.Identifier("MapTo" + classToMapToTypeSymbol.Name)
                 )
                 .WithModifiers
@@ -118,7 +121,7 @@ namespace DesignTimeMapper.Engine.MapperGeneration
                             (
                                 SyntaxFactory.ObjectCreationExpression
                                     (
-                                        SyntaxFactory.IdentifierName(classToMapToTypeSymbol.Name)
+                                        SyntaxFactory.IdentifierName(classToMapToName)
                                     )
                                     .WithArgumentList
                                     (
@@ -143,10 +146,7 @@ namespace DesignTimeMapper.Engine.MapperGeneration
             var withUsings = new MethodWithUsings
             {
                 Method = methodDeclaration,
-                Usings = new List<INamespaceSymbol>
-                {
-                    classToMapToTypeSymbol.ContainingNamespace
-                }
+                Usings = new List<INamespaceSymbol>()
             };
 
             return withUsings;

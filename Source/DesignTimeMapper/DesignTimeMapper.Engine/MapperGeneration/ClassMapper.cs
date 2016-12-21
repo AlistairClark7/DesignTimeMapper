@@ -11,10 +11,10 @@ namespace DesignTimeMapper.Engine.MapperGeneration
 {
     public class ClassMapper
     {
+        public const string MapperClassName = "DtmExtensions";
+
         public SourceText CreateMapClass(IEnumerable<MethodWithUsings> methods, string namespaceName)
         {
-            var newClassName = "DesignTimeMapper";
-
             var newClass = SyntaxFactory.CompilationUnit()
                 .WithMembers
                 (
@@ -25,7 +25,7 @@ namespace DesignTimeMapper.Engine.MapperGeneration
                             SyntaxFactory.NamespaceDeclaration(SyntaxFactory.IdentifierName(namespaceName))
                                 .WithMembers(
                                     SyntaxFactory.SingletonList<MemberDeclarationSyntax>(
-                                        SyntaxFactory.ClassDeclaration(newClassName)
+                                        SyntaxFactory.ClassDeclaration(MapperClassName)
                                             .WithMembers
                                             (
                                                 SyntaxFactory.List
