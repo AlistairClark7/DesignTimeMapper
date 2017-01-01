@@ -167,6 +167,7 @@
   <ItemGroup>
     <Compile Include="AddressDto.cs" />
     <Compile Include="ClassWithExternalReference.cs" />
+    <Compile Include="DtmExtensions.cs" />
     <Compile Include="NestedClass.cs" />
     <Compile Include="NestedClassDto.cs" />
     <Compile Include="SimpleClass.cs" />

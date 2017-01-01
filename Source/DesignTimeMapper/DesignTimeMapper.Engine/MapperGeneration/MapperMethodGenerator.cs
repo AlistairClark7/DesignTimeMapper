@@ -16,25 +16,21 @@ namespace DesignTimeMapper.Engine.MapperGeneration
         {
             var methodDeclarationSyntaxs = new List<MethodWithUsings>();
 
-            foreach (var namedTypeSymbol in GetClassesInCompilation(compilation))
+            foreach (var classToMapToTypeSymbol in GetClassesInCompilation(compilation))
                 foreach (
                     var attributeData in
-                    namedTypeSymbol.GetAttributes().Where(a => a.AttributeClass.Name == nameof(MapFromAttribute)))
+                        classToMapToTypeSymbol.GetAttributes().Where(a => a.AttributeClass.Name == nameof(MapFromAttribute)))
                 {
                     var type = attributeData.ConstructorArguments[0];
                     foreach (var typedConstant in type.Values)
                     {
-                        var attributeTypeSymbol = typedConstant.Value as INamedTypeSymbol;
+                        var classToMapFromTypeSymbol = typedConstant.Value as INamedTypeSymbol;
 
-                        if (attributeTypeSymbol != null)
+                        if (classToMapFromTypeSymbol != null)
                         {
-                            var mapToWithUsings = CreateMapperMethod(namedTypeSymbol, attributeTypeSymbol);
-                            var mapFromWithUsings = CreateMapperMethod(attributeTypeSymbol, namedTypeSymbol);
-
-                            methodDeclarationSyntaxs.Add(mapToWithUsings);
-                            methodDeclarationSyntaxs.Add(mapFromWithUsings);
+                            var methods = CreateMapperMethods(classToMapToTypeSymbol, classToMapFromTypeSymbol);
+                            methodDeclarationSyntaxs.AddRange(methods);
                         }
-
                     }
                 }
 
@@ -45,21 +41,21 @@ namespace DesignTimeMapper.Engine.MapperGeneration
         {
             foreach (
                 var result in
-                compilation.SyntaxTrees
-                    .Select(syntaxTree => compilation.GetSemanticModel(syntaxTree))
-                    .Select(
-                        semanticModel =>
-                            semanticModel.SyntaxTree.GetRoot()
-                                .DescendantNodesAndSelf()
-                                .OfType<ClassDeclarationSyntax>()
-                                .Select(
-                                    propertyDeclarationSyntax =>
+                    compilation.SyntaxTrees
+                        .Select(syntaxTree => compilation.GetSemanticModel(syntaxTree))
+                        .Select(
+                            semanticModel =>
+                                semanticModel.SyntaxTree.GetRoot()
+                                    .DescendantNodesAndSelf()
+                                    .OfType<ClassDeclarationSyntax>()
+                                    .Select(
+                                        propertyDeclarationSyntax =>
                                             semanticModel.GetDeclaredSymbol(propertyDeclarationSyntax))))
                 foreach (var namedTypeSymbol in result)
                     yield return namedTypeSymbol;
         }
 
-        private MethodWithUsings CreateMapperMethod(INamedTypeSymbol classToMapToTypeSymbol,
+        private IEnumerable<MethodWithUsings> CreateMapperMethods(INamedTypeSymbol classToMapToTypeSymbol,
             INamedTypeSymbol classToMapFromTypeSymbol)
         {
             var inputArgName = classToMapFromTypeSymbol.Name.ToCamelCase();
@@ -69,14 +65,40 @@ namespace DesignTimeMapper.Engine.MapperGeneration
                 classToMapFromName = classToMapFromTypeSymbol.Name;
             else
                 classToMapFromName = classToMapFromTypeSymbol.GetFullMetadataName();
-            
+
             var classToMapToSymbols =
                 classToMapToTypeSymbol.GetMembers().Where(m => m.Kind == SymbolKind.Property).Cast<IPropertySymbol>();
             var classToMapFromSymbols =
                 classToMapFromTypeSymbol.GetMembers().Where(m => m.Kind == SymbolKind.Property).Cast<IPropertySymbol>();
-            var assignmentExpressionSyntaxs = GetAssignmentExpressionSyntaxs(classToMapToSymbols, classToMapFromSymbols,
+            //TODO handle case where expression syntaxes are empty
+            var assignmentExpressionSyntaxs = GetBothAssignmentExpressionSyntaxs(classToMapToSymbols, classToMapFromSymbols,
                 inputArgName, new IPropertySymbol[0]);
             var classToMapToName = classToMapToTypeSymbol.GetFullMetadataName();
+            var mapToMethodDeclaration = CreateMethodDeclaration(classToMapToTypeSymbol, classToMapToName, inputArgName, classToMapFromName,
+                                                                    assignmentExpressionSyntaxs.Where(
+                                                                        a => a.Type == MapType.MapTo)
+                                                                        .Select(a => a.AssignmentExpressionSyntax));
+
+            yield return new MethodWithUsings
+            {
+                Method = mapToMethodDeclaration,
+                Usings = new List<INamespaceSymbol>()
+            };
+
+            var mapFromMethodDeclaration = CreateMethodDeclaration(classToMapFromTypeSymbol, classToMapFromName, inputArgName, classToMapToName,
+                                                                    assignmentExpressionSyntaxs.Where(
+                                                                        a => a.Type == MapType.MapFrom)
+                                                                        .Select(a => a.AssignmentExpressionSyntax));
+            yield return new MethodWithUsings
+            {
+                Method = mapFromMethodDeclaration,
+                Usings = new List<INamespaceSymbol>()
+            };
+        }
+
+        private static MethodDeclarationSyntax CreateMethodDeclaration(INamedTypeSymbol classToMapToTypeSymbol,
+            string classToMapToName, string inputArgName, string classToMapFromName, IEnumerable<AssignmentExpressionSyntax> expressionSyntaxs)
+        {
             var methodDeclaration = SyntaxFactory.MethodDeclaration
                 (
                     SyntaxFactory.IdentifierName(classToMapToName),
@@ -85,71 +107,126 @@ namespace DesignTimeMapper.Engine.MapperGeneration
                 .WithModifiers
                 (
                     SyntaxFactory.TokenList
-                    (SyntaxFactory.Token(SyntaxKind.PublicKeyword),
-                        SyntaxFactory.Token(SyntaxKind.StaticKeyword))
+                        (SyntaxFactory.Token(SyntaxKind.PublicKeyword),
+                            SyntaxFactory.Token(SyntaxKind.StaticKeyword))
                 )
                 .WithParameterList
                 (
                     SyntaxFactory.ParameterList
-                    (
-                        SyntaxFactory.SeparatedList(
-                            new[]
-                            {
-                                SyntaxFactory.Parameter
-                                    (
-                                        SyntaxFactory.Identifier(inputArgName)
-                                    )
-                                    .WithType
-                                    (
-                                        SyntaxFactory.IdentifierName(classToMapFromName)
-                                    )
-                                    .WithModifiers
-                                    (
-                                        SyntaxTokenList.Create(SyntaxFactory.Token(SyntaxKind.ThisKeyword))
-                                    )
-                            }
+                        (
+                            SyntaxFactory.SeparatedList(
+                                new[]
+                                {
+                                    SyntaxFactory.Parameter
+                                        (
+                                            SyntaxFactory.Identifier(inputArgName)
+                                        )
+                                        .WithType
+                                        (
+                                            SyntaxFactory.IdentifierName(classToMapFromName)
+                                        )
+                                        .WithModifiers
+                                        (
+                                            SyntaxTokenList.Create(SyntaxFactory.Token(SyntaxKind.ThisKeyword))
+                                        )
+                                }
+                                )
                         )
-                    )
                 )
                 .WithBody
                 (
                     SyntaxFactory.Block
-                    (
-                        SyntaxFactory.SingletonList<StatementSyntax>
                         (
-                            SyntaxFactory.ReturnStatement
-                            (
-                                SyntaxFactory.ObjectCreationExpression
-                                    (
-                                        SyntaxFactory.IdentifierName(classToMapToName)
-                                    )
-                                    .WithArgumentList
-                                    (
-                                        SyntaxFactory.ArgumentList()
-                                    )
-                                    .WithInitializer
-                                    (
-                                        SyntaxFactory.InitializerExpression
+                            SyntaxFactory.SingletonList<StatementSyntax>
+                                (
+                                    SyntaxFactory.ReturnStatement
                                         (
-                                            SyntaxKind.ObjectInitializerExpression,
-                                            SyntaxFactory.SeparatedList<ExpressionSyntax>
-                                            (
-                                                assignmentExpressionSyntaxs
-                                            )
+                                            SyntaxFactory.ObjectCreationExpression
+                                                (
+                                                    SyntaxFactory.IdentifierName(classToMapToName)
+                                                )
+                                                .WithArgumentList
+                                                (
+                                                    SyntaxFactory.ArgumentList()
+                                                )
+                                                .WithInitializer
+                                                (
+                                                    SyntaxFactory.InitializerExpression
+                                                        (
+                                                            SyntaxKind.ObjectInitializerExpression,
+                                                            SyntaxFactory.SeparatedList<ExpressionSyntax>
+                                                                (
+                                                                expressionSyntaxs
+                                                                )
+                                                        )
+                                                )
                                         )
-                                    )
-                            )
+                                )
                         )
-                    )
                 );
+            return methodDeclaration;
+        }
 
-            var withUsings = new MethodWithUsings
+        private static IEnumerable<MapperMethodExpression> GetBothAssignmentExpressionSyntaxs(
+            IEnumerable<IPropertySymbol> classToMapToSymbols, IEnumerable<IPropertySymbol> classToMapFromSymbols,
+            string inputArgName, IEnumerable<IPropertySymbol> parents)
+        {
+            foreach (var symbol in classToMapFromSymbols)
             {
-                Method = methodDeclaration,
-                Usings = new List<INamespaceSymbol>()
-            };
+                //TODO optimise this
+                var potentialName = string.Join("", parents.Select(p => p.Name).Concat(new[] {symbol.Name}));
+                var matchingSymbol =
+                    classToMapToSymbols.FirstOrDefault(
+                        s =>
+                            (s.Name == potentialName) &&
+                            !s.GetAttributes().Any(a => a.AttributeClass.Name == nameof(DoNotMapAttribute)));
 
-            return withUsings;
+                if (matchingSymbol != null)
+                {
+                    var actualPropertyName = string.Join(".", parents.Select(p => p.Name).Concat(new[] {symbol.Name}));
+                    yield return new MapperMethodExpression(SyntaxFactory.AssignmentExpression
+                        (
+                            SyntaxKind
+                                .SimpleAssignmentExpression,
+                            SyntaxFactory.IdentifierName(matchingSymbol.Name),
+                            SyntaxFactory.MemberAccessExpression
+                                (
+                                    SyntaxKind
+                                        .SimpleMemberAccessExpression,
+                                    SyntaxFactory.IdentifierName(inputArgName),
+                                    SyntaxFactory.IdentifierName(actualPropertyName)
+                                )
+                        ), MapType.MapTo);
+
+                    if (parents != null && parents.Any())
+                    {
+
+                    }
+                    else
+                    {
+                        yield return new MapperMethodExpression(SyntaxFactory.AssignmentExpression
+                            (
+                                SyntaxKind
+                                    .SimpleAssignmentExpression,
+                                SyntaxFactory.IdentifierName(actualPropertyName),
+                                SyntaxFactory.MemberAccessExpression
+                                    (
+                                        SyntaxKind
+                                            .SimpleMemberAccessExpression,
+                                        SyntaxFactory.IdentifierName(inputArgName),
+                                        SyntaxFactory.IdentifierName(matchingSymbol.Name)
+                                    )
+                            ), MapType.MapFrom);
+                    }
+                }
+
+                foreach (
+                    var v in
+                        GetAssignmentExpressionSyntaxs(classToMapToSymbols,
+                            symbol.Type.GetMembers().Where(m => m.Kind == SymbolKind.Property).Cast<IPropertySymbol>(),
+                            inputArgName, parents.Concat(new[] {symbol})))
+                    yield return new MapperMethodExpression(v, MapType.MapTo);
+            }
         }
 
 
@@ -171,25 +248,25 @@ namespace DesignTimeMapper.Engine.MapperGeneration
                 {
                     var actualName = string.Join(".", parents.Select(p => p.Name).Concat(new[] {symbol.Name}));
                     yield return SyntaxFactory.AssignmentExpression
-                    (
-                        SyntaxKind
-                            .SimpleAssignmentExpression,
-                        SyntaxFactory.IdentifierName(matchingSymbol.Name),
-                        SyntaxFactory.MemberAccessExpression
                         (
                             SyntaxKind
-                                .SimpleMemberAccessExpression,
-                            SyntaxFactory.IdentifierName(inputArgName),
-                            SyntaxFactory.IdentifierName(actualName)
-                        )
-                    );
+                                .SimpleAssignmentExpression,
+                            SyntaxFactory.IdentifierName(matchingSymbol.Name),
+                            SyntaxFactory.MemberAccessExpression
+                                (
+                                    SyntaxKind
+                                        .SimpleMemberAccessExpression,
+                                    SyntaxFactory.IdentifierName(inputArgName),
+                                    SyntaxFactory.IdentifierName(actualName)
+                                )
+                        );
                 }
 
                 foreach (
                     var v in
-                    GetAssignmentExpressionSyntaxs(classToMapToSymbols,
-                        symbol.Type.GetMembers().Where(m => m.Kind == SymbolKind.Property).Cast<IPropertySymbol>(),
-                        inputArgName, parents.Concat(new[] {symbol})))
+                        GetAssignmentExpressionSyntaxs(classToMapToSymbols,
+                            symbol.Type.GetMembers().Where(m => m.Kind == SymbolKind.Property).Cast<IPropertySymbol>(),
+                            inputArgName, parents.Concat(new[] {symbol})))
                     yield return v;
             }
         }

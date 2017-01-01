@@ -169,6 +169,8 @@
     <Compile Include="MapperGeneration\Mapper.cs" />
     <Compile Include="MapperGeneration\ClassMapper.cs" />
     <Compile Include="MapperGeneration\MapperMethodGenerator.cs" />
+    <Compile Include="Model\MapperMethodExpression.cs" />
+    <Compile Include="Model\MapType.cs" />
     <Compile Include="Model\MethodWithUsings.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Extensions\RoslynExtensions.cs" />
