@@ -199,6 +199,8 @@ namespace DesignTimeMapper.Engine.MapperGeneration
                             s.Name.Contains(potentialName) &&
                             !s.GetAttributes().Any(a => a.AttributeClass.Name == nameof(DoNotMapAttribute)));
 
+                    if(!matchingSubProperties.Any()) yield break;
+
                     var separatedSyntaxList = new SeparatedSyntaxList<ExpressionSyntax>();
 
                     foreach (var matchingSubProperty in matchingSubProperties)
