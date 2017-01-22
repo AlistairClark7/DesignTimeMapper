@@ -4,8 +4,13 @@ namespace DesignTimeMapper.Engine.Model
 {
     public class MatchingProperty
     {
-        public IPropertySymbol ClassToMapFromProperty { get; set; }
-        public IPropertySymbol ClassToMapToProperty { get; set; }
+        public MatchingProperty(IPropertySymbol mapToPropertySymbol)
+        {
+            MapToProperty = mapToPropertySymbol;
+        }
+
+        public IPropertySymbol MapFromProperty { get; set; }
+        public IPropertySymbol MapToProperty { get; set; }
 
         public bool DoNotMap { get; set; }
     }

@@ -171,8 +171,9 @@
     <Compile Include="MapperGeneration\MapperMethodGenerator.cs" />
     <Compile Include="Model\MapType.cs" />
     <Compile Include="Model\MatchingProperty.cs" />
+    <Compile Include="Model\MatchingPropertyTree.cs" />
     <Compile Include="Model\MethodWithUsings.cs" />
-    <Compile Include="Model\TreeNode.cs" />
+    <Compile Include="Model\MapTreeNode.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Extensions\RoslynExtensions.cs" />
     <Compile Include="Settings\DtmSettings.cs" />

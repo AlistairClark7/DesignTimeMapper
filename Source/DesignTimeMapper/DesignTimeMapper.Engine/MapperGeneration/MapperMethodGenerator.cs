@@ -164,23 +164,66 @@ namespace DesignTimeMapper.Engine.MapperGeneration
             return methodDeclaration;
         }
 
-        private TreeNode<MatchingProperty> GetMatchingPropertyTree(IEnumerable<IPropertySymbol> classToMapFromSymbols, IEnumerable<IPropertySymbol> classToMapToSymbols, string inputArgName)
+        private MatchingPropertyTree GetMatchingPropertyTree(IEnumerable<IPropertySymbol> classToMapFromSymbols, IEnumerable<IPropertySymbol> classToMapToSymbols, string inputArgName)
         {
-            return GetMatchingPropertyTree(classToMapFromSymbols, classToMapToSymbols, inputArgName,
-                new TreeNode<MatchingProperty>(new MatchingProperty()));
+            var mapToTree = new MapTreeNode<IPropertySymbol>(null);
+            var mapFromTree = new MapTreeNode<IPropertySymbol>(null);
+
+            BuildMatchingPropertyTree(classToMapToSymbols, mapToTree, classToMapFromSymbols, mapFromTree);
+            
+            var matchingPropertyTree = new MatchingPropertyTree
+            {
+                MapFromTree = mapFromTree,
+                MapToTree = mapToTree
+            };
+            return matchingPropertyTree;
         }
 
 
-        private TreeNode<MatchingProperty> GetMatchingPropertyTree(IEnumerable<IPropertySymbol> classToMapFromSymbols, IEnumerable<IPropertySymbol> classToMapToSymbols, string inputArgName, TreeNode<MatchingProperty> parent)
+        private void BuildMatchingPropertyTree(IEnumerable<IPropertySymbol> classToMapToSymbols, MapTreeNode<IPropertySymbol> mapToNode, IEnumerable<IPropertySymbol> classToMapFromSymbols, MapTreeNode<IPropertySymbol> mapFromTree)
         {
             foreach (var classToMapToSymbol in classToMapToSymbols)
             {
-                var potentialName = string.Empty;
-                parent.TraverseAncestors(s => potentialName.Insert(0, s.ClassToMapToProperty.Name));
-                potentialName += classToMapToSymbol.Name;
+                var mapToChild = mapToNode.AddChild(classToMapToSymbol);
 
-                var matchingSymbols = classToMapFromSymbols.Where(s => s.Name == potentialName);
+                string potentialName = string.Empty;
+                mapToChild.TraverseAncestors(s => potentialName = potentialName.Insert(0, s.Name));
 
+                foreach (var classToMapFromSymbol in classToMapFromSymbols)
+                {
+                    var mapFromChild = mapFromTree.AddOrGetChild(classToMapFromSymbol);
+                    if (potentialName == classToMapFromSymbol.Name)
+                    {
+                        mapToChild.AddMapping(mapFromChild);
+                        break;
+                    }
+                    if(potentialName.StartsWith(classToMapFromSymbol.Name))
+                    {
+                        IPropertySymbol mapFromChildProperty = GetMatchingChild(mapFromChild, potentialName,
+                            classToMapFromSymbol.Type.GetMembers()
+                                .Where(m => m.Kind == SymbolKind.Property)
+                                .Cast<IPropertySymbol>());
+
+                        if (mapFromChildProperty != null)
+                        {
+                            var mapFromChildChild = mapFromChild.AddChild(mapFromChildProperty);
+                            mapToChild.AddMapping(mapFromChildChild);
+                            break;   
+                        }
+                    }
+                    if (classToMapFromSymbol.Name.EndsWith(potentialName))
+                    {
+                        
+                    }
+
+
+                    string potentialMappedName = string.Empty;
+                    mapFromTree.TraverseAncestors(s => potentialName = potentialName.Insert(0, s.Name));
+                    if (potentialMappedName == potentialName)
+                    {
+                        
+                    }
+                }
                 //if (matchingSymbolName != null)
                 //{
                 //    var actualPropertyName = string.Join(".", parents.Select(p => p.Name).Concat(new[] { symbol.Name }));
@@ -202,7 +245,20 @@ namespace DesignTimeMapper.Engine.MapperGeneration
                 //{
                 //}
             }
-            throw new NotImplementedException();
+        }
+
+        private IPropertySymbol GetMatchingChild(MapTreeNode<IPropertySymbol> parent, string potentialName, IEnumerable<IPropertySymbol> propertySymbols)
+        {
+            foreach (var propertySymbol in propertySymbols)
+            {
+                var potentialMappedName = string.Empty;
+                parent.TraverseAncestors(s => potentialMappedName = potentialMappedName.Insert(0, s.Name));
+                potentialMappedName += propertySymbol.Name;
+
+                if (potentialName == potentialMappedName)
+                    return propertySymbol;
+            }
+            return null;
         }
 
         private static IEnumerable<AssignmentExpressionSyntax> GetAssignmentExpressionSyntaxs(
