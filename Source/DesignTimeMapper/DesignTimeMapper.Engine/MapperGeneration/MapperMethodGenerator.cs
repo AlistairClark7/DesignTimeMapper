@@ -74,13 +74,15 @@ namespace DesignTimeMapper.Engine.MapperGeneration
 
             //TODO handle case where expression syntaxes are empty
             var classToMapToName = classToMapToTypeSymbol.GetFullMetadataName();
-            var mapToMethodDeclaration = CreateMethodDeclaration(classToMapToTypeSymbol, classToMapToName, inputArgName, classToMapFromName,
-                                                                    GetAssignmentExpressionSyntaxs(classToMapToSymbols, classToMapFromSymbols, inputArgName, new List<IPropertySymbol>()));
-            yield return new MethodWithUsings
-            {
-                Method = mapToMethodDeclaration,
-                Usings = new List<INamespaceSymbol>()
-            };
+            //var mapToMethodDeclaration = CreateMethodDeclaration(classToMapToTypeSymbol, classToMapToName, inputArgName, classToMapFromName,
+            //                                                        GetAssignmentExpressionSyntaxs(classToMapToSymbols, classToMapFromSymbols, inputArgName, new List<IPropertySymbol>()));
+            //yield return new MethodWithUsings
+            //{
+            //    Method = mapToMethodDeclaration,
+            //    Usings = new List<INamespaceSymbol>()
+            //};
+
+            GetMatchingPropertyTree(classToMapFromSymbols, classToMapToSymbols, inputArgName);
 
             var mapFromMethodDeclaration = CreateMethodDeclaration(classToMapFromTypeSymbol, classToMapFromName, inputArgName, classToMapToName,
                                                                     GetAssignmentExpressionSyntaxs(classToMapFromSymbols, classToMapToSymbols, inputArgName, new List<IPropertySymbol>()));
@@ -90,7 +92,7 @@ namespace DesignTimeMapper.Engine.MapperGeneration
                 Usings = new List<INamespaceSymbol>()
             };
         }
-
+        
         private static MethodDeclarationSyntax CreateMethodDeclaration(INamedTypeSymbol classToMapToTypeSymbol,
             string classToMapToName, string inputArgName, string classToMapFromName, IEnumerable<AssignmentExpressionSyntax> expressionSyntaxs)
         {
@@ -162,6 +164,47 @@ namespace DesignTimeMapper.Engine.MapperGeneration
             return methodDeclaration;
         }
 
+        private TreeNode<MatchingProperty> GetMatchingPropertyTree(IEnumerable<IPropertySymbol> classToMapFromSymbols, IEnumerable<IPropertySymbol> classToMapToSymbols, string inputArgName)
+        {
+            return GetMatchingPropertyTree(classToMapFromSymbols, classToMapToSymbols, inputArgName,
+                new TreeNode<MatchingProperty>(new MatchingProperty()));
+        }
+
+
+        private TreeNode<MatchingProperty> GetMatchingPropertyTree(IEnumerable<IPropertySymbol> classToMapFromSymbols, IEnumerable<IPropertySymbol> classToMapToSymbols, string inputArgName, TreeNode<MatchingProperty> parent)
+        {
+            foreach (var classToMapToSymbol in classToMapToSymbols)
+            {
+                var potentialName = string.Empty;
+                parent.TraverseAncestors(s => potentialName.Insert(0, s.ClassToMapToProperty.Name));
+                potentialName += classToMapToSymbol.Name;
+
+                var matchingSymbols = classToMapFromSymbols.Where(s => s.Name == potentialName);
+
+                //if (matchingSymbolName != null)
+                //{
+                //    var actualPropertyName = string.Join(".", parents.Select(p => p.Name).Concat(new[] { symbol.Name }));
+                //    yield return SyntaxFactory.AssignmentExpression
+                //    (
+                //        SyntaxKind
+                //            .SimpleAssignmentExpression,
+                //        SyntaxFactory.IdentifierName(actualPropertyName),
+                //        SyntaxFactory.MemberAccessExpression
+                //        (
+                //            SyntaxKind
+                //                .SimpleMemberAccessExpression,
+                //            SyntaxFactory.IdentifierName(inputArgName),
+                //            SyntaxFactory.IdentifierName(string.Join(".", matchingSymbolName))
+                //        )
+                //    );
+                //}
+                //else
+                //{
+                //}
+            }
+            throw new NotImplementedException();
+        }
+
         private static IEnumerable<AssignmentExpressionSyntax> GetAssignmentExpressionSyntaxs(
             IEnumerable<IPropertySymbol> classToMapToSymbols, IEnumerable<IPropertySymbol> classToMapFromSymbols,
             string inputArgName, IEnumerable<IPropertySymbol> parents)
@@ -193,30 +236,27 @@ namespace DesignTimeMapper.Engine.MapperGeneration
                 }
                 else
                 {
-                    //TODO this section here should be recursive for each property
-                    var matchingSubProperties = classToMapFromSymbols.Where(
-                        s =>
-                            s.Name.Contains(potentialName) &&
-                            !s.GetAttributes().Any(a => a.AttributeClass.Name == nameof(DoNotMapAttribute)));
-
-                    if(!matchingSubProperties.Any()) yield break;
-
                     var separatedSyntaxList = new SeparatedSyntaxList<ExpressionSyntax>();
-
-                    foreach (var matchingSubProperty in matchingSubProperties)
+                    foreach (var s in classToMapFromSymbols)
                     {
-                        separatedSyntaxList = separatedSyntaxList.Add(SyntaxFactory.AssignmentExpression
-                        (
-                            SyntaxKind.SimpleAssignmentExpression,
-                            SyntaxFactory.IdentifierName(matchingSubProperty.Name.Replace(potentialName, "")),
-                            SyntaxFactory.MemberAccessExpression
-                            (
-                                SyntaxKind
-                                    .SimpleMemberAccessExpression,
-                                SyntaxFactory.IdentifierName(inputArgName),
-                                SyntaxFactory.IdentifierName(matchingSubProperty.Name)
-                            )
-                        ));
+                        if(s.Name == potentialName &&
+                            s.GetAttributes().Any(a => a.AttributeClass.Name == nameof(DoNotMapAttribute))) continue;
+
+                        if (s.Name.Contains(potentialName))
+                        {
+                            separatedSyntaxList = separatedSyntaxList.Add(SyntaxFactory.AssignmentExpression
+                          (
+                              SyntaxKind.SimpleAssignmentExpression,
+                              SyntaxFactory.IdentifierName(s.Name.Replace(potentialName, "")),
+                              SyntaxFactory.MemberAccessExpression
+                              (
+                                  SyntaxKind
+                                      .SimpleMemberAccessExpression,
+                                  SyntaxFactory.IdentifierName(inputArgName),
+                                  SyntaxFactory.IdentifierName(s.Name)
+                              )
+                          ));
+                        }
                     }
 
                     yield return SyntaxFactory.AssignmentExpression
@@ -233,7 +273,7 @@ namespace DesignTimeMapper.Engine.MapperGeneration
 
         private static List<string> GetMatchingSymbolName(IEnumerable<IPropertySymbol> classToMapFromSymbols, string potentialName, ITypeSymbol type, List<string> parentNames)
         {
-            var matching = classToMapFromSymbols.FirstOrDefault(s => s.Name == potentialName && s.Type == type);
+            var matching = classToMapFromSymbols.FirstOrDefault(s => s.Name == potentialName && s.Type == type && !s.GetAttributes().Any(a => a.AttributeClass.Name == nameof(DoNotMapAttribute)));
 
             if (matching != null) return new List<string> { matching.Name };
 
@@ -257,6 +297,12 @@ namespace DesignTimeMapper.Engine.MapperGeneration
             }
 
             return null;
+        }
+
+        private static void A(IEnumerable<IPropertySymbol> classToMapToSymbols, IEnumerable<IPropertySymbol> classToMapFromSymbols,
+            string inputArgName)
+        {
+            
         }
     }
 }
