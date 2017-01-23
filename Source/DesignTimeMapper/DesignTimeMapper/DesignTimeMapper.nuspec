@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>$id$</id>
-    <version>0.3.0</version>
+    <version>0.4.0</version>
     <title>$title$</title>
     <authors>Alistair Clark</authors>
     <owners>Alistair Clark</owners>
@@ -10,7 +10,7 @@
     <projectUrl>https://github.com/AlistairClark7/DesignTimeMapper</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Tool that uses Roslyn to automatically create object-object mapper methods</description>
-    <releaseNotes>Removed Roslyn references, and added versions targeting .NET 3.5, 4.0 and 4.5</releaseNotes>
+    <releaseNotes>Mapper methods are extenstion methods instead of simple static methods</releaseNotes>
     <copyright>Copyright 2016</copyright>
     <tags></tags>
   </metadata>
