@@ -32,7 +32,7 @@ E.g.
         public string NestedProperty2 { get; set; }
     }
 
-When the project is built a new class is added called `DesignTimeMapper.cs` which contains the mapper methods.
+When the project is built a new class is added called `DtmExtenstions.cs` which contains the mapper methods.
 
 More details and features to come later!
 

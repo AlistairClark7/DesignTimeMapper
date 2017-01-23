@@ -76,10 +76,18 @@ namespace DesignTimeMapper.Engine.MapperGeneration
             var classToMapToName = classToMapToTypeSymbol.GetFullMetadataName();
             
             var tree = GetMatchingPropertyTree(classToMapFromSymbols, classToMapToSymbols, inputArgName);
-            //var tree = GetMatchingPropertyTree(classToMapToSymbols, classToMapFromSymbols, inputArgName);
 
-            var mapFromMethodDeclaration = CreateMethodDeclaration(classToMapToTypeSymbol, classToMapToName, inputArgName, classToMapFromName,
+            var mapToMethodDeclaration = CreateMethodDeclaration(classToMapToTypeSymbol, classToMapToName, inputArgName, classToMapFromName,
                 GetAssignmentExpressionSyntaxs(tree.MapToTree, inputArgName));
+            yield return new MethodWithUsings
+            {
+                Method = mapToMethodDeclaration,
+                Usings = new List<INamespaceSymbol>()
+            };
+
+
+            var mapFromMethodDeclaration = CreateMethodDeclaration(classToMapFromTypeSymbol, classToMapFromName, inputArgName, classToMapToName,
+                GetAssignmentExpressionSyntaxs(tree.MapFromTree, inputArgName));
             yield return new MethodWithUsings
             {
                 Method = mapFromMethodDeclaration,
