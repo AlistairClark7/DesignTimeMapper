@@ -81,7 +81,24 @@ namespace DesignTimeMapper.Engine.Model
             if(Value!= null)
                 action(Value);
 
-            Parent?.TraverseAncestors(action);
+            if (Parent != null)
+            {
+                Parent.TraverseAncestors(action);
+            }
+        }
+        
+        public IEnumerable<T> GetAncestors()
+        {
+            if (Parent != null)
+            { 
+                if(Parent.Value != null)
+                    yield return Parent.Value;
+
+                foreach (var ancestor in Parent.GetAncestors())
+                {
+                    yield return ancestor;
+                }
+            }
         }
 
         public IEnumerable<T> Flatten()

@@ -74,18 +74,12 @@ namespace DesignTimeMapper.Engine.MapperGeneration
 
             //TODO handle case where expression syntaxes are empty
             var classToMapToName = classToMapToTypeSymbol.GetFullMetadataName();
-            //var mapToMethodDeclaration = CreateMethodDeclaration(classToMapToTypeSymbol, classToMapToName, inputArgName, classToMapFromName,
-            //                                                        GetAssignmentExpressionSyntaxs(classToMapToSymbols, classToMapFromSymbols, inputArgName, new List<IPropertySymbol>()));
-            //yield return new MethodWithUsings
-            //{
-            //    Method = mapToMethodDeclaration,
-            //    Usings = new List<INamespaceSymbol>()
-            //};
+            
+            var tree = GetMatchingPropertyTree(classToMapFromSymbols, classToMapToSymbols, inputArgName);
+            //var tree = GetMatchingPropertyTree(classToMapToSymbols, classToMapFromSymbols, inputArgName);
 
-            GetMatchingPropertyTree(classToMapFromSymbols, classToMapToSymbols, inputArgName);
-
-            var mapFromMethodDeclaration = CreateMethodDeclaration(classToMapFromTypeSymbol, classToMapFromName, inputArgName, classToMapToName,
-                                                                    GetAssignmentExpressionSyntaxs(classToMapFromSymbols, classToMapToSymbols, inputArgName, new List<IPropertySymbol>()));
+            var mapFromMethodDeclaration = CreateMethodDeclaration(classToMapToTypeSymbol, classToMapToName, inputArgName, classToMapFromName,
+                GetAssignmentExpressionSyntaxs(tree.MapToTree, inputArgName));
             yield return new MethodWithUsings
             {
                 Method = mapFromMethodDeclaration,
@@ -211,11 +205,10 @@ namespace DesignTimeMapper.Engine.MapperGeneration
                             break;   
                         }
                     }
-                    if (classToMapFromSymbol.Name.EndsWith(potentialName))
+                    if (classToMapFromSymbol.Name.StartsWith(potentialName))
                     {
                         
                     }
-
 
                     string potentialMappedName = string.Empty;
                     mapFromTree.TraverseAncestors(s => potentialName = potentialName.Insert(0, s.Name));
@@ -259,6 +252,54 @@ namespace DesignTimeMapper.Engine.MapperGeneration
                     return propertySymbol;
             }
             return null;
+        }
+
+        private static IEnumerable<AssignmentExpressionSyntax> GetAssignmentExpressionSyntaxs(
+            MapTreeNode<IPropertySymbol> node, string inputArgName)
+        {
+            foreach (var child in node.Children)
+            {
+                if (!HasValidMapping(child)) continue;
+
+                if (child.Children.Any())
+                {
+                    //Recursive
+                }
+                else
+                {
+                    //TODO better way of getting the name
+                    var ancestors = child.MapsTo.GetAncestors();
+                    var name = string.Join(".", ancestors.Select(a => a.Name)) + "." + child.MapsTo.Value.Name;
+
+                    yield return SyntaxFactory.AssignmentExpression
+                    (
+                        SyntaxKind
+                            .SimpleAssignmentExpression,
+                        SyntaxFactory.IdentifierName(child.Value.Name),
+                        SyntaxFactory.MemberAccessExpression
+                        (
+                            SyntaxKind
+                                .SimpleMemberAccessExpression,
+                            SyntaxFactory.IdentifierName(inputArgName),
+                            SyntaxFactory.IdentifierName(name)
+                        )
+                    );
+                }
+            }
+
+            yield break;
+        }
+
+        private static bool HasValidMapping(MapTreeNode<IPropertySymbol> child)
+        {
+            var hasMapping = child.MapsTo != null;
+
+            if (!hasMapping) return false;
+
+            var childHasDoNotMapAttribute = child.Value.GetAttributes().Any(a => a.AttributeClass.Name == nameof(DoNotMapAttribute));
+            var mapsToHasDoNotMapAttribute = child.MapsTo.Value.GetAttributes().Any(a => a.AttributeClass.Name == nameof(DoNotMapAttribute));
+            return !childHasDoNotMapAttribute &&
+                   !mapsToHasDoNotMapAttribute;
         }
 
         private static IEnumerable<AssignmentExpressionSyntax> GetAssignmentExpressionSyntaxs(
