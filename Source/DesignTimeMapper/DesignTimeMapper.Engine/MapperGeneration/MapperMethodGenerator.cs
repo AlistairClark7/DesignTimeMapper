@@ -85,7 +85,6 @@ namespace DesignTimeMapper.Engine.MapperGeneration
                 Usings = new List<INamespaceSymbol>()
             };
 
-
             var mapFromMethodDeclaration = CreateMethodDeclaration(classToMapFromTypeSymbol, classToMapFromName, inputArgName, classToMapToName,
                 GetAssignmentExpressionSyntaxs(tree.MapFromTree, inputArgName));
             yield return new MethodWithUsings
@@ -96,7 +95,7 @@ namespace DesignTimeMapper.Engine.MapperGeneration
         }
         
         private static MethodDeclarationSyntax CreateMethodDeclaration(INamedTypeSymbol classToMapToTypeSymbol,
-            string classToMapToName, string inputArgName, string classToMapFromName, IEnumerable<AssignmentExpressionSyntax> expressionSyntaxs)
+            string classToMapToName, string inputArgName, string classToMapFromName, IEnumerable<ExpressionSyntax> expressionSyntaxs)
         {
             var methodDeclaration = SyntaxFactory.MethodDeclaration
                 (
@@ -225,26 +224,6 @@ namespace DesignTimeMapper.Engine.MapperGeneration
                         
                     }
                 }
-                //if (matchingSymbolName != null)
-                //{
-                //    var actualPropertyName = string.Join(".", parents.Select(p => p.Name).Concat(new[] { symbol.Name }));
-                //    yield return SyntaxFactory.AssignmentExpression
-                //    (
-                //        SyntaxKind
-                //            .SimpleAssignmentExpression,
-                //        SyntaxFactory.IdentifierName(actualPropertyName),
-                //        SyntaxFactory.MemberAccessExpression
-                //        (
-                //            SyntaxKind
-                //                .SimpleMemberAccessExpression,
-                //            SyntaxFactory.IdentifierName(inputArgName),
-                //            SyntaxFactory.IdentifierName(string.Join(".", matchingSymbolName))
-                //        )
-                //    );
-                //}
-                //else
-                //{
-                //}
             }
         }
 
@@ -262,22 +241,37 @@ namespace DesignTimeMapper.Engine.MapperGeneration
             return null;
         }
 
-        private static IEnumerable<AssignmentExpressionSyntax> GetAssignmentExpressionSyntaxs(
+        private static IEnumerable<ExpressionSyntax> GetAssignmentExpressionSyntaxs(
             MapTreeNode<IPropertySymbol> node, string inputArgName)
         {
             foreach (var child in node.Children)
             {
-                if (!HasValidMapping(child)) continue;
-
                 if (child.Children.Any())
                 {
                     //Recursive
+                    var separatedSyntaxList = new SeparatedSyntaxList<ExpressionSyntax>();
+                    foreach (var assignmentExpressionSyntax in GetAssignmentExpressionSyntaxs(child, inputArgName))
+                    {
+                        separatedSyntaxList = separatedSyntaxList.Add(assignmentExpressionSyntax);
+                    }
+
+                    yield return SyntaxFactory.AssignmentExpression
+                    (
+                    SyntaxKind
+                        .SimpleAssignmentExpression,
+                    SyntaxFactory.IdentifierName(child.Value.Name),
+                    SyntaxFactory.ObjectCreationExpression(
+                        SyntaxFactory.IdentifierName(child.Value.Type.GetFullMetadataName()),
+                        SyntaxFactory.ArgumentList(), SyntaxFactory.InitializerExpression(SyntaxKind.ObjectInitializerExpression, separatedSyntaxList)));
+
+
                 }
-                else
+                else if(HasValidMapping(child))
                 {
                     //TODO better way of getting the name
                     var ancestors = child.MapsTo.GetAncestors();
                     var name = string.Join(".", ancestors.Select(a => a.Name)) + "." + child.MapsTo.Value.Name;
+                    if (name.StartsWith(".")) name = name.Remove(0, 1);
 
                     yield return SyntaxFactory.AssignmentExpression
                     (
@@ -293,9 +287,7 @@ namespace DesignTimeMapper.Engine.MapperGeneration
                         )
                     );
                 }
-            }
-
-            yield break;
+            }    
         }
 
         private static bool HasValidMapping(MapTreeNode<IPropertySymbol> child)
@@ -308,106 +300,6 @@ namespace DesignTimeMapper.Engine.MapperGeneration
             var mapsToHasDoNotMapAttribute = child.MapsTo.Value.GetAttributes().Any(a => a.AttributeClass.Name == nameof(DoNotMapAttribute));
             return !childHasDoNotMapAttribute &&
                    !mapsToHasDoNotMapAttribute;
-        }
-
-        private static IEnumerable<AssignmentExpressionSyntax> GetAssignmentExpressionSyntaxs(
-            IEnumerable<IPropertySymbol> classToMapToSymbols, IEnumerable<IPropertySymbol> classToMapFromSymbols,
-            string inputArgName, IEnumerable<IPropertySymbol> parents)
-        {
-            foreach (var symbol in classToMapToSymbols)
-            {
-                if(symbol.GetAttributes().Any(a => a.AttributeClass.Name == nameof(DoNotMapAttribute))) continue;
-
-                //TODO optimise this
-                var potentialName = string.Join("", parents.Select(p => p.Name).Concat(new[] {symbol.Name}));
-                var matchingSymbolName = GetMatchingSymbolName(classToMapFromSymbols, potentialName, symbol.Type, new List<string>());
-
-                if (matchingSymbolName != null)
-                {
-                    var actualPropertyName = string.Join(".", parents.Select(p => p.Name).Concat(new[] {symbol.Name}));
-                    yield return SyntaxFactory.AssignmentExpression
-                    (
-                        SyntaxKind
-                            .SimpleAssignmentExpression,
-                        SyntaxFactory.IdentifierName(actualPropertyName),
-                        SyntaxFactory.MemberAccessExpression
-                        (
-                            SyntaxKind
-                                .SimpleMemberAccessExpression,
-                            SyntaxFactory.IdentifierName(inputArgName),
-                            SyntaxFactory.IdentifierName(string.Join(".", matchingSymbolName))
-                        )
-                    );
-                }
-                else
-                {
-                    var separatedSyntaxList = new SeparatedSyntaxList<ExpressionSyntax>();
-                    foreach (var s in classToMapFromSymbols)
-                    {
-                        if(s.Name == potentialName &&
-                            s.GetAttributes().Any(a => a.AttributeClass.Name == nameof(DoNotMapAttribute))) continue;
-
-                        if (s.Name.Contains(potentialName))
-                        {
-                            separatedSyntaxList = separatedSyntaxList.Add(SyntaxFactory.AssignmentExpression
-                          (
-                              SyntaxKind.SimpleAssignmentExpression,
-                              SyntaxFactory.IdentifierName(s.Name.Replace(potentialName, "")),
-                              SyntaxFactory.MemberAccessExpression
-                              (
-                                  SyntaxKind
-                                      .SimpleMemberAccessExpression,
-                                  SyntaxFactory.IdentifierName(inputArgName),
-                                  SyntaxFactory.IdentifierName(s.Name)
-                              )
-                          ));
-                        }
-                    }
-
-                    yield return SyntaxFactory.AssignmentExpression
-                    (
-                        SyntaxKind
-                            .SimpleAssignmentExpression,
-                        SyntaxFactory.IdentifierName(symbol.Name),
-                        SyntaxFactory.ObjectCreationExpression(
-                            SyntaxFactory.IdentifierName(symbol.Type.GetFullMetadataName()),
-                            SyntaxFactory.ArgumentList(), SyntaxFactory.InitializerExpression(SyntaxKind.ObjectInitializerExpression, separatedSyntaxList)));
-                }
-            }
-        }
-
-        private static List<string> GetMatchingSymbolName(IEnumerable<IPropertySymbol> classToMapFromSymbols, string potentialName, ITypeSymbol type, List<string> parentNames)
-        {
-            var matching = classToMapFromSymbols.FirstOrDefault(s => s.Name == potentialName && s.Type == type && !s.GetAttributes().Any(a => a.AttributeClass.Name == nameof(DoNotMapAttribute)));
-
-            if (matching != null) return new List<string> { matching.Name };
-
-
-            foreach (var classToMapFromSymbol in classToMapFromSymbols)
-            {
-                var members = classToMapFromSymbol.Type.GetMembers()
-                    .Where(m => m.Kind == SymbolKind.Property);
-                var names = new List<string>();
-                names.AddRange(parentNames);
-                names.Add(classToMapFromSymbol.Name);
-                var matchingName  =
-                    GetMatchingSymbolName(
-                        members
-                            .Cast<IPropertySymbol>(), potentialName.Replace(classToMapFromSymbol.Name, ""), type, names);
-                if (matchingName != null)
-                {
-                    names.AddRange(matchingName);
-                    return names;
-                }
-            }
-
-            return null;
-        }
-
-        private static void A(IEnumerable<IPropertySymbol> classToMapToSymbols, IEnumerable<IPropertySymbol> classToMapFromSymbols,
-            string inputArgName)
-        {
-            
         }
     }
 }
