@@ -5,31 +5,76 @@ NuGet package for creating object-object mapping methods.
 
 Install from NuGet. Use the command `Install-Package DesignTimeMapper`
 
+## What is it? ##
+
+It's like AutoMapper. But instead of the mappings happening at run time, they are created at compile time using Roslyn to generate extension methods.
+
 ## How to use ##
 
 Add the `MapFromAttribute` to a class with the type you want to map from.
-E.g.
+E.g. given these classes
+    
+    public class ClassWithNesting
+    {
+        public string Property1 { get; set; }
+        public SimpleClass Nested { get; set; }
+    }
+    
+    public class SimpleClass
+    {
+        public int Property1 { get; set; }
+        public string Property2 { get; set; }
+    }
 
-
-    [MapFrom(typeof(NestedClass))]
-    public class NestedClassDto
+    [MapFrom(typeof(ClassWithNesting))]
+    public class ClassWithNestingDto
     {
         public string Property1 { get; set; }
         public int NestedProperty1 { get; set; }
         public string NestedProperty2 { get; set; }
     }
 
+The result of the mapping will be 
+    
+    public static DesignTimeMapper.ExamplePocos.ClassWithNestingDto MapToNestedClassDto(this ClassWithNesting nestedclass)
+    {
+        return new DesignTimeMapper.ExamplePocos.ClassWithNestingDto()
+        {Property1 = nestedclass.Property1, NestedProperty1 = nestedclass.Nested.Property1, NestedProperty2 = nestedclass.Nested.Property2};
+    }
+
+    public static ClassWithNesting MapToNestedClass(this DesignTimeMapper.ExamplePocos.ClassWithNestingDto nestedclass)
+    {
+        return new ClassWithNesting()
+        {Property1 = nestedclass.Property1, Nested = new DesignTimeMapper.ExamplePocos.SimpleClass()
+        {Property1 = nestedclass.NestedProperty1, Property2 = nestedclass.NestedProperty2}};
+    }
+
 If you want to exclude properties from being mapped then use the `DoNotMapAttribute`
 
 E.g. 
-
-    [MapFrom(typeof(NestedClass))]
-    public class NestedClassDto
+    
+    [MapFrom(typeof(ClassWithNesting))]
+    public class ClassWithNestingDto
     {
         [DoNotMap]
         public string Property1 { get; set; }
         public int NestedProperty1 { get; set; }
         public string NestedProperty2 { get; set; }
+    }
+
+Will result in a mapping of 
+
+    public static DesignTimeMapper.ExamplePocos.ClassWithNestingDto MapToClassWithNestingDto(this ClassWithNesting classwithnesting)
+    {
+        return new DesignTimeMapper.ExamplePocos.ClassWithNestingDto()
+        {NestedProperty1 = classwithnesting.Nested.Property1, NestedProperty2 = classwithnesting.Nested.Property2};
+    }
+
+    public static ClassWithNesting MapToClassWithNesting(this DesignTimeMapper.ExamplePocos.ClassWithNestingDto classwithnesting)
+    {
+        return new ClassWithNesting()
+        {Nested = new DesignTimeMapper.ExamplePocos.SimpleClass()
+        {Property1 = classwithnesting.NestedProperty1, Property2 = classwithnesting.NestedProperty2}};
     }
 
 When the project is built a new class is added called `DtmExtenstions.cs` which contains the mapper methods.
