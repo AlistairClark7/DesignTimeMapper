@@ -81,6 +81,25 @@ When the project is built a new class is added called `DtmExtenstions.cs` which 
 
 More details and features to come later!
 
+## How does it work? ##
+
+When you install the nuget package, it will add a `PreBuildEvent` in a `.targets` file which looks like:
+
+`<PreBuildEvent>"$(SolutionDir)packages\DesignTimeMapper.0.4.0\build\DesignTimeMapper.CommandLine.exe" "$(SolutionPath)" "$(MSBuildProjectName)"</PreBuildEvent>`
+
+Each time the project is built, the command line tool uses Roslyn to look for any classes with the `[MapFrom]` attribute. For each of these classes, it will create two extension methods to map from and to each class. That's about it really.
+
+## The future ##
+
+At the moment it's quite basic. In the future it will do some more things like:
+- Checking that the mapped values are both readable/writable
+- Null checking (with nice exception throwing)
+- Optional type coersion (e.g. automatic generation of TryParse to go from a string to an int)
+- Custom pattern matching
+- Configurable extension file/class/method names
+- Performance improvements - it's probably not as effecient as it could be. Build time on projects with many mappings may currently be slow
+- Any other features that people request or are willing to contribute
+
 ## Known issues ##
 
 There are no checks for types during the mapping - so it may generate code that does not compile.
