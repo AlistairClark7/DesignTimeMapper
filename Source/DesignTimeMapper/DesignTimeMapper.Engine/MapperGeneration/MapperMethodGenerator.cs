@@ -181,18 +181,19 @@ namespace DesignTimeMapper.Engine.MapperGeneration
         }
 
 
-        private void BuildMatchingPropertyTree(IEnumerable<IPropertySymbol> classToMapToSymbols, MapTreeNode<IPropertySymbol> mapToNode, IEnumerable<IPropertySymbol> classToMapFromSymbols, MapTreeNode<IPropertySymbol> mapFromTree)
+        private void BuildMatchingPropertyTree(IEnumerable<IPropertySymbol> classToMapToSymbols, MapTreeNode<IPropertySymbol> mapToNode, IEnumerable<IPropertySymbol> classToMapFromSymbols, MapTreeNode<IPropertySymbol> mapFromNode)
         {
             foreach (var classToMapToSymbol in classToMapToSymbols)
             {
-                var mapToChild = mapToNode.AddChild(classToMapToSymbol);
+                var mapToChild = mapToNode.AddOrGetChild(classToMapToSymbol);
+                if(mapToChild.MapsTo != null) continue;
 
                 string potentialName = string.Empty;
                 mapToChild.TraverseAncestors(s => potentialName = potentialName.Insert(0, s.Name));
 
                 foreach (var classToMapFromSymbol in classToMapFromSymbols)
                 {
-                    var mapFromChild = mapFromTree.AddOrGetChild(classToMapFromSymbol);
+                    var mapFromChild = mapFromNode.AddOrGetChild(classToMapFromSymbol);
                     if (potentialName == classToMapFromSymbol.Name)
                     {
                         mapToChild.AddMapping(mapFromChild);
@@ -214,14 +215,8 @@ namespace DesignTimeMapper.Engine.MapperGeneration
                     }
                     if (classToMapFromSymbol.Name.StartsWith(potentialName))
                     {
-                        
-                    }
-
-                    string potentialMappedName = string.Empty;
-                    mapFromTree.TraverseAncestors(s => potentialName = potentialName.Insert(0, s.Name));
-                    if (potentialMappedName == potentialName)
-                    {
-                        
+                        var childSymbols = classToMapToSymbol.Type.GetMembers().Where(m => m.Kind == SymbolKind.Property).Cast<IPropertySymbol>();
+                        BuildMatchingPropertyTree(childSymbols, mapToChild, classToMapFromSymbols, mapFromNode);
                     }
                 }
             }
