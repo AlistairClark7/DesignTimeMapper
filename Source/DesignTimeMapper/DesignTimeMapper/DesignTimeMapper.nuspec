@@ -10,8 +10,8 @@
     <projectUrl>https://github.com/AlistairClark7/DesignTimeMapper</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Tool that uses Roslyn to automatically create object-object mapper methods</description>
-    <releaseNotes>Mapper methods are extenstion methods instead of simple static methods</releaseNotes>
-    <copyright>Copyright 2016</copyright>
+    <releaseNotes>Support for nested properties on class with MapFrom attribute</releaseNotes>
+    <copyright>Copyright 2017</copyright>
     <tags></tags>
   </metadata>
   <files>
