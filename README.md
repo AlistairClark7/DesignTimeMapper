@@ -85,7 +85,7 @@ More details and features to come later!
 
 When you install the nuget package, it will add a `PreBuildEvent` in a `.targets` file which looks like:
 
-`<PreBuildEvent>"$(SolutionDir)packages\DesignTimeMapper.0.4.0\build\DesignTimeMapper.CommandLine.exe" "$(SolutionPath)" "$(MSBuildProjectName)"</PreBuildEvent>`
+`<PreBuildEvent>"$(SolutionDir)packages\DesignTimeMapper.0.4.1\build\DesignTimeMapper.CommandLine.exe" "$(SolutionPath)" "$(MSBuildProjectName)"</PreBuildEvent>`
 
 Each time the project is built, the command line tool uses Roslyn to look for any classes with the `[MapFrom]` attribute. For each of these classes, it will create two extension methods to map from and to each class. That's about it really.
 
