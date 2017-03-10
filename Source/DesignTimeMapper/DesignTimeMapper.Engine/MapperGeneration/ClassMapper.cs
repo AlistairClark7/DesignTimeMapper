@@ -13,7 +13,7 @@ namespace DesignTimeMapper.Engine.MapperGeneration
     {
         public const string MapperClassName = "DtmExtensions";
 
-        public SourceText CreateMapClass(IEnumerable<MethodWithUsings> methods, string namespaceName)
+        public SourceText CreateMapClass(IEnumerable<MemberDeclarationSyntax> methods, string namespaceName)
         {
             var newClass = SyntaxFactory.CompilationUnit()
                 .WithMembers
@@ -30,7 +30,7 @@ namespace DesignTimeMapper.Engine.MapperGeneration
                                             (
                                                 SyntaxFactory.List
                                                 (
-                                                    methods.Select(m => m.Method)
+                                                    methods
                                                 )
                                             )
                                             .WithModifiers(
@@ -40,16 +40,6 @@ namespace DesignTimeMapper.Engine.MapperGeneration
                         }
                     )
                 );
-
-            var usings = new HashSet<string> {namespaceName};
-            foreach (var methodWithUsings in methods)
-                foreach (var name in methodWithUsings.Usings.Select(u => u.GetFullMetadataName()).Distinct())
-                {
-                    if (usings.Contains(name)) continue;
-
-                    newClass = newClass.AddUsings(SyntaxFactory.UsingDirective(SyntaxFactory.ParseName(name)));
-                    usings.Add(name);
-                }
 
             return newClass.NormalizeWhitespace().GetText();
         }

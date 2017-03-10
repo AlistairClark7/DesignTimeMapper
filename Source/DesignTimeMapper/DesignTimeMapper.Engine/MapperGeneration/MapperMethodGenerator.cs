@@ -13,9 +13,9 @@ namespace DesignTimeMapper.Engine.MapperGeneration
 {
     public class MapperMethodGenerator : IMapperMethodGenerator
     {
-        public IList<MethodWithUsings> CreateMapperMethods(Compilation compilation)
+        public IList<MemberDeclarationSyntax> CreateMapperMethods(Compilation compilation)
         {
-            var methodDeclarationSyntaxs = new List<MethodWithUsings>();
+            var methodDeclarationSyntaxs = new List<MemberDeclarationSyntax>();
 
             foreach (var classToMapToTypeSymbol in GetClassesInCompilation(compilation))
                 foreach (
@@ -56,7 +56,7 @@ namespace DesignTimeMapper.Engine.MapperGeneration
                     yield return namedTypeSymbol;
         }
 
-        private IEnumerable<MethodWithUsings> CreateMapperMethods(INamedTypeSymbol classToMapToTypeSymbol,
+        private IEnumerable<MemberDeclarationSyntax> CreateMapperMethods(INamedTypeSymbol classToMapToTypeSymbol,
             INamedTypeSymbol classToMapFromTypeSymbol)
         {
             var inputArgName = classToMapFromTypeSymbol.Name.ToCamelCase();
@@ -79,19 +79,11 @@ namespace DesignTimeMapper.Engine.MapperGeneration
 
             var mapToMethodDeclaration = CreateMethodDeclaration(classToMapToTypeSymbol, classToMapToName, inputArgName, classToMapFromName,
                 GetAssignmentExpressionSyntaxs(tree.MapToTree, inputArgName));
-            yield return new MethodWithUsings
-            {
-                Method = mapToMethodDeclaration,
-                Usings = new List<INamespaceSymbol>()
-            };
+            yield return  mapToMethodDeclaration;
 
             var mapFromMethodDeclaration = CreateMethodDeclaration(classToMapFromTypeSymbol, classToMapFromName, inputArgName, classToMapToName,
                 GetAssignmentExpressionSyntaxs(tree.MapFromTree, inputArgName));
-            yield return new MethodWithUsings
-            {
-                Method = mapFromMethodDeclaration,
-                Usings = new List<INamespaceSymbol>()
-            };
+            yield return mapFromMethodDeclaration;
         }
         
         private static MethodDeclarationSyntax CreateMethodDeclaration(INamedTypeSymbol classToMapToTypeSymbol,
