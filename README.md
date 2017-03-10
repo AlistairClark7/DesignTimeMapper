@@ -94,7 +94,7 @@ Each time the project is built, the command line tool uses Roslyn to look for an
 At the moment it's quite basic. In the future it will do some more things like:
 - Checking that the mapped values are both readable/writable
 - Null checking (with nice exception throwing)
-- Generation of `Expression<Func<...>>`s for things like Entity Framework queries 
+- Generation of `Expression<Func<...>>`s to be used for mappings in Entity Framework queries 
 - Optional type coersion (e.g. automatic generation of TryParse to go from a string to an int)
 - Custom pattern matching
 - Configurable extension file/class/method names

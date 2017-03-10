@@ -162,8 +162,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DtoGeneration\DtoClassMapper.cs" />
-    <Compile Include="DtoGeneration\DtoMapperMethodGenerator.cs" />
     <Compile Include="Interface\IDtoMapperMethodGenerator.cs" />
     <Compile Include="Interface\IMapperMethodGenerator.cs" />
     <Compile Include="MapperGeneration\Mapper.cs" />
