@@ -162,13 +162,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Interface\IDtoMapperMethodGenerator.cs" />
     <Compile Include="Interface\IMapperMethodGenerator.cs" />
     <Compile Include="MapperGeneration\Mapper.cs" />
     <Compile Include="MapperGeneration\ClassMapper.cs" />
     <Compile Include="MapperGeneration\MapperMethodGenerator.cs" />
-    <Compile Include="Model\MapType.cs" />
-    <Compile Include="Model\MatchingProperty.cs" />
     <Compile Include="Model\MatchingPropertyTree.cs" />
     <Compile Include="Model\MethodWithUsings.cs" />
     <Compile Include="Model\MapTreeNode.cs" />
