@@ -60,12 +60,7 @@ namespace DesignTimeMapper.Engine.MapperGeneration
             INamedTypeSymbol classToMapFromTypeSymbol)
         {
             var inputArgName = classToMapFromTypeSymbol.Name.ToCamelCase();
-            string classToMapFromName;
-            if (classToMapToTypeSymbol.ContainingNamespace.GetFullMetadataName() ==
-                classToMapFromTypeSymbol.ContainingNamespace.GetFullMetadataName())
-                classToMapFromName = classToMapFromTypeSymbol.Name;
-            else
-                classToMapFromName = classToMapFromTypeSymbol.GetFullMetadataName();
+            string classToMapFromName = classToMapFromTypeSymbol.GetFullMetadataName();
 
             var classToMapToSymbols =
                 classToMapToTypeSymbol.GetMembers().Where(m => m.Kind == SymbolKind.Property).Cast<IPropertySymbol>();
