@@ -120,36 +120,54 @@ namespace DesignTimeMapper.Engine.MapperGeneration
                 )
                 .WithBody
                 (
-                    SyntaxFactory.Block
-                        (
-                            SyntaxFactory.SingletonList<StatementSyntax>
-                                (
-                                    SyntaxFactory.ReturnStatement
-                                        (
-                                            SyntaxFactory.ObjectCreationExpression
-                                                (
-                                                    SyntaxFactory.IdentifierName(classToMapToName)
-                                                )
-                                                .WithArgumentList
-                                                (
-                                                    SyntaxFactory.ArgumentList()
-                                                )
-                                                .WithInitializer
-                                                (
-                                                    SyntaxFactory.InitializerExpression
-                                                        (
-                                                            SyntaxKind.ObjectInitializerExpression,
-                                                            SyntaxFactory.SeparatedList<ExpressionSyntax>
-                                                                (
-                                                                expressionSyntaxs
-                                                                )
-                                                        )
-                                                )
-                                        )
-                                )
-                        )
+                    SyntaxFactory.Block(SyntaxFactory.TryStatement(ReturnBlock(classToMapToName, expressionSyntaxs), SyntaxFactory.SingletonList(SyntaxFactory.CatchClause(SyntaxFactory.CatchDeclaration(SyntaxFactory.ParseTypeName(nameof(NullReferenceException))), null, DefaultReturnBlock(classToMapToName))), null))
                 );
             return methodDeclaration;
+        }
+
+        private static BlockSyntax ReturnBlock(string classToMapToName, IEnumerable<ExpressionSyntax> expressionSyntaxs)
+        {
+            return SyntaxFactory.Block
+            (
+                SyntaxFactory.SingletonList<StatementSyntax>
+                (
+                    SyntaxFactory.ReturnStatement
+                    (
+                        SyntaxFactory.ObjectCreationExpression
+                            (
+                                SyntaxFactory.IdentifierName(classToMapToName)
+                            )
+                            .WithArgumentList
+                            (
+                                SyntaxFactory.ArgumentList()
+                            )
+                            .WithInitializer
+                            (
+                                SyntaxFactory.InitializerExpression
+                                (
+                                    SyntaxKind.ObjectInitializerExpression,
+                                    SyntaxFactory.SeparatedList<ExpressionSyntax>
+                                    (
+                                        expressionSyntaxs
+                                    )
+                                )
+                            )
+                    )
+                )
+            );
+        }
+        private static BlockSyntax DefaultReturnBlock(string classToMapToName)
+        {
+            return SyntaxFactory.Block
+            (
+                SyntaxFactory.SingletonList<StatementSyntax>
+                (
+                    SyntaxFactory.ReturnStatement
+                    (
+                        SyntaxFactory.DefaultExpression(SyntaxFactory.ParseTypeName(classToMapToName))
+                    )
+                )
+            );
         }
 
         private MatchingPropertyTree GetMatchingPropertyTree(IEnumerable<IPropertySymbol> classToMapFromSymbols, IEnumerable<IPropertySymbol> classToMapToSymbols, string inputArgName)

@@ -41,6 +41,8 @@ namespace DesignTimeMapper.Engine.MapperGeneration
                     )
                 );
 
+            newClass = newClass.AddUsings(SyntaxFactory.UsingDirective(SyntaxFactory.ParseName(nameof(System))));
+
             return newClass.NormalizeWhitespace().GetText();
         }
     }
