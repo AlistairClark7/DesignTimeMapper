@@ -248,7 +248,6 @@ namespace DesignTimeMapper.Engine.MapperGeneration
             {
                 if (child.Children.Any())
                 {
-                    //Recursive
                     var separatedSyntaxList = new SeparatedSyntaxList<ExpressionSyntax>();
                     foreach (var assignmentExpressionSyntax in GetAssignmentExpressionSyntaxs(child, inputArgName))
                     {
