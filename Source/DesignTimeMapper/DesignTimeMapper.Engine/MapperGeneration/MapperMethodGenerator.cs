@@ -158,7 +158,7 @@ namespace DesignTimeMapper.Engine.MapperGeneration
         }
 
         /// <summary>
-        /// Create a return default(x); syntax black
+        /// Create a "return default(className);" syntax block
         /// </summary>
         /// <param name="className"></param>
         /// <returns></returns>
