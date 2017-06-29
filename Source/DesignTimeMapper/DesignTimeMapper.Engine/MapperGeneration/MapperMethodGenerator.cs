@@ -156,15 +156,22 @@ namespace DesignTimeMapper.Engine.MapperGeneration
                 )
             );
         }
-        private static BlockSyntax DefaultReturnBlock(string classToMapToName)
+
+        /// <summary>
+        /// Create a return default(x); syntax black
+        /// </summary>
+        /// <param name="className"></param>
+        /// <returns></returns>
+        private static BlockSyntax DefaultReturnBlock(string className)
         {
+            //TODO move to extensions class?
             return SyntaxFactory.Block
             (
                 SyntaxFactory.SingletonList<StatementSyntax>
                 (
                     SyntaxFactory.ReturnStatement
                     (
-                        SyntaxFactory.DefaultExpression(SyntaxFactory.ParseTypeName(classToMapToName))
+                        SyntaxFactory.DefaultExpression(SyntaxFactory.ParseTypeName(className))
                     )
                 )
             );
